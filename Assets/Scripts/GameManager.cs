@@ -1,11 +1,10 @@
 using UnityEngine;
 
-public class GameManager : ProjectBehaviour
+public class GameManager
 {
-    public static GameManager Instance { get; private set; }
+    private static readonly GameManager _instance = new GameManager();
+    
+    public static GameManager Instance { get { return _instance; } }
 
-    private void Awake()
-    {
-        Instance = this;
-    }
+    public SpaceManager Space { get; set; }
 }

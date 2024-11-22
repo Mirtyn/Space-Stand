@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Camera))]
-public class PlayerController : ProjectBehaviour
+public class PlayerController : RootBehaviour
 {
     private Camera camera;
     private PlayerInputs input;
