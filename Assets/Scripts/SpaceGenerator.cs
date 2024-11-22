@@ -11,7 +11,7 @@ public class SpaceGenerator : ObjectBehaviour
     [SerializeField] private GameObject astroidPrefab;
 
     [SerializeField] private SpaceLayersSO spaceLayersSO;
-    public PlanetGenerationSettingsSO PlanetGenerationSettings;
+    //public PlanetGenerationSettingsSO PlanetGenerationSettings;
 
     private void Awake()
     {

@@ -8,10 +8,6 @@ public class PlayerController : ObjectBehaviour
     [SerializeField] private float scrollSensitivity = 10f;
     [SerializeField] private float moveSpeed = 5f;
 
-    [SerializeField] private Transform planetInspectorPanel;
-    [SerializeField] private Transform planetInspectorPanelEndPoint;
-    [SerializeField] private AnimationCurve planetInspectorPanelSlideCurve;
-
     [SerializeField] private Transform pointer;
     [SerializeField] private AnimationCurve pointerScaleCurve;
     [SerializeField] private AnimationCurve pointerMoveCurve;
@@ -75,7 +71,17 @@ public class PlayerController : ObjectBehaviour
             if (input.Mouse0Down)
             {
                 collider.gameObject.GetComponent<SpaceObjectVisual>().OnClick();
+
+
             }
+        }
+        else if (input.Mouse0Down)
+        {
+            pointerMoveDelta = 0f;
+            increaseMoveDelta = false;
+            increaseScaleDelta = false;
+
+            SpaceObjectInspector.Instance.InView = false;
         }
         else
         {
@@ -118,9 +124,6 @@ public class PlayerController : ObjectBehaviour
         }
 
         pointerScaleDelta = Mathf.Clamp01(pointerScaleDelta);
-
-        Debug.Log("pointerMoveDelta: " + pointerScaleDelta);
-        Debug.Log("pointerMoveCurve: " + pointerScaleCurve.Evaluate(pointerScaleDelta));
 
         float f = Mathf.LerpUnclamped(0, pointerTargetScale, pointerScaleCurve.Evaluate(pointerScaleDelta));
         Vector3 v3 = new Vector3(f, f, f);

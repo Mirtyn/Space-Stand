@@ -8,7 +8,7 @@ public abstract class SpaceObject
     protected Vector2 position;
     protected SpaceObjectVisual visual;
     protected string description => attributes.GetAttributesAsJson();
-    protected string name;
+    protected string name => attributes.GetName();
     protected ISpaceObjectAttributes attributes;
 
     public SpaceObject(Vector2 position, SpaceObjectVisual visual)
@@ -19,7 +19,7 @@ public abstract class SpaceObject
 
     public void Clicked()
     {
-
+        SpaceObjectInspector.Instance.SetSpaceObject(name, description);
     }
 }
 
@@ -28,7 +28,6 @@ public interface ISpaceObjectAttributes
 {
     public abstract string GetAttributesAsJson();
     public abstract string GetName();
-    public abstract void GetAttributes();
 }
 
 namespace SpaceStand.Planets.Attributes

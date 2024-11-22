@@ -33,6 +33,12 @@ public static class PlanetGenerator
 
         var planetGameObject = UnityEngine.Object.Instantiate(_planetRootPrefab, position, Quaternion.identity);
 
+        var spaceObjectVisual = planetGameObject.GetComponent<SpaceObjectVisual>();
+
+        var planet = new Planet(position, spaceObjectVisual);
+
+        spaceObjectVisual.SetSpaceObject(planet);
+
         var meshFilter = planetGameObject.GetComponent<MeshFilter>();
 
         const float width = 1f;
