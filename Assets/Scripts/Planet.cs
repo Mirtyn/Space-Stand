@@ -126,6 +126,8 @@ public class PlanetAttributes : ISpaceObjectAttributes
             if ((value & (1 << i)) != 0)
             {
                 values.Add(i);
+
+                
             }
         }
 
