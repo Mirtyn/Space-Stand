@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class SpaceObjectVisual : RootBehaviour
+public class SpaceObjectVisual : ObjectBehaviour
 {
     public Transform Transform { get; private set; }
     private SpaceObject spaceObject;
