@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpaceGenerator : ProjectBehaviour
+public class SpaceGenerator : ObjectBehaviour
 {
     public static SpaceGenerator Instance { get ; private set; }
 

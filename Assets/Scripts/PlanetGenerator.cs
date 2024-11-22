@@ -42,6 +42,13 @@ public static class PlanetGenerator
             new Vector3(1.0f, 0.0f, 0.0f),
         };
 
+        //var colors = new Color32[]
+        //{
+        //    new Color32(255, 0, 0, 255),
+        //    new Color32(255, 255, 0, 255),
+        //    new Color32(0, 255, 255, 255),
+        //};
+
         var triangles = new int[]
         {
             0, 1, 2,
@@ -53,6 +60,10 @@ public static class PlanetGenerator
 
         mesh.vertices = vertices;
         mesh.triangles = triangles;
+        //mesh.colors32 = colors;
+
+        //mesh.Optimize();
+        mesh.RecalculateNormals();
 
         planetGameObject.name = "Planet";
         planetGameObject.transform.SetParent(_rootGameObject.transform, false);
