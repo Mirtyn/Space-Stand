@@ -32,18 +32,18 @@ public class PlanetAttributes : ISpaceObjectAttributes
 
     public PlanetAttributes()
     {
-        PlanetGenerationSettingsSO planetGenerationSettings = SpaceGenerator.Instance.PlanetGenerationSettings;
-        int nameStartLength = planetGenerationSettings.PlanetNameStart.Length;
-        int nameEndLength = planetGenerationSettings.PlanetNameEnd.Length;
+        //PlanetGenerationSettingsSO planetGenerationSettings = PlanetGenerationSettingsSO.Instance.PlanetGenerationSettings;
+        int nameStartLength = PlanetGenerationSettingsSO.PlanetNameStart.Length;
+        int nameEndLength = PlanetGenerationSettingsSO.PlanetNameEnd.Length;
 
-        Name = planetGenerationSettings.PlanetNameStart[Random.Range(0, nameStartLength)] +
-            planetGenerationSettings.PlanetNameStart[Random.Range(0, nameStartLength)] +
+        Name = PlanetGenerationSettingsSO.PlanetNameStart[Random.Range(0, nameStartLength)] +
+            PlanetGenerationSettingsSO.PlanetNameStart[Random.Range(0, nameStartLength)] +
             "-" +
-            planetGenerationSettings.PlanetNameEnd[Random.Range(0, nameEndLength)] +
-            planetGenerationSettings.PlanetNameEnd[Random.Range(0, nameEndLength)] +
-            planetGenerationSettings.PlanetNameEnd[Random.Range(0, nameEndLength)];
+            PlanetGenerationSettingsSO.PlanetNameEnd[Random.Range(0, nameEndLength)] +
+            PlanetGenerationSettingsSO.PlanetNameEnd[Random.Range(0, nameEndLength)] +
+            PlanetGenerationSettingsSO.PlanetNameEnd[Random.Range(0, nameEndLength)];
 
-        Temperature = Random.Range(planetGenerationSettings.MinTemperature, planetGenerationSettings.MaxTemperature + 1);
+        Temperature = Random.Range(PlanetGenerationSettingsSO.MinTemperature, PlanetGenerationSettingsSO.MaxTemperature + 1);
         Size = (PlanetSize)Random.Range(0, 3);
         Type = (PlanetType)Random.Range(1, 5);
 

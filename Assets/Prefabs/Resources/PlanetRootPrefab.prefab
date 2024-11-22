@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1328089375515915770}
   - component: {fileID: 4108061221199767643}
   - component: {fileID: 3294330268342851781}
+  - component: {fileID: -3415003942997610880}
   m_Layer: 0
   m_Name: PlanetRootPrefab
   m_TagString: Untagged
@@ -123,3 +124,15 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.5
+--- !u!114 &-3415003942997610880
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3771961192055281879}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06455fc69eddf4f46a2f59a3c8469594, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

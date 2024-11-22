@@ -691,7 +691,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000030517578, y: -82}
+  m_AnchoredPosition: {x: 0, y: -82}
   m_SizeDelta: {x: -46.55, y: 128.928}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &691842906
@@ -1196,8 +1196,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33a3533329f8ee947abd626e41e97bf5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  planetInspectorPanelStartPoint: {fileID: 85529758}
-  planetInspectorPanelEndPoint: {fileID: 1955411232}
+  planetInspectorPanelStartPoint: {fileID: 1955411232}
+  planetInspectorPanelEndPoint: {fileID: 85529758}
   planetInspectorPanelSlideCurve:
     serializedVersion: 2
     m_Curve:
