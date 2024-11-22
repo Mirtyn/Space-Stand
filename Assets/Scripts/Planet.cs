@@ -33,6 +33,15 @@ public class PlanetAttributes : ISpaceObjectAttributes
     public PlanetAttributes()
     {
         PlanetGenerationSettingsSO planetGenerationSettings = SpaceGenerator.Instance.PlanetGenerationSettings;
+        int nameStartLength = planetGenerationSettings.PlanetNameStart.Length;
+        int nameEndLength = planetGenerationSettings.PlanetNameEnd.Length;
+
+        Name = planetGenerationSettings.PlanetNameStart[Random.Range(0, nameStartLength)] +
+            planetGenerationSettings.PlanetNameStart[Random.Range(0, nameStartLength)] +
+            "-" +
+            planetGenerationSettings.PlanetNameEnd[Random.Range(0, nameEndLength)] +
+            planetGenerationSettings.PlanetNameEnd[Random.Range(0, nameEndLength)] +
+            planetGenerationSettings.PlanetNameEnd[Random.Range(0, nameEndLength)];
 
         Temperature = Random.Range(planetGenerationSettings.MinTemperature, planetGenerationSettings.MaxTemperature + 1);
         Size = (PlanetSize)Random.Range(0, 3);
@@ -158,11 +167,6 @@ public class PlanetAttributes : ISpaceObjectAttributes
         return randomValue;
     }
     */
-
-    public void GetAttributes()
-    {
-
-    }
 
     public string GetName()
     {
