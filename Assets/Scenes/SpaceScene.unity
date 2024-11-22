@@ -203,7 +203,7 @@ MonoBehaviour:
   planetPrefab: {fileID: 103134341307261981, guid: ebbc735fad7e5944589672fa3fd3b0ae, type: 3}
   astroidPrefab: {fileID: 0}
   spaceLayersSO: {fileID: 0}
-  PlanetGenerationSettings: {fileID: 0}
+  PlanetGenerationSettings: {fileID: 11400000, guid: af2d00ec84a1f1846b59763c22b8ae8b, type: 2}
 --- !u!4 &119594728
 Transform:
   m_ObjectHideFlags: 0

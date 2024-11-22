@@ -16,7 +16,7 @@ public class SpaceGenerator : ProjectBehaviour
     private void Awake()
     {
         Instance = this;
-        ScatterPlanets(50);
+        ScatterPlanets(1);
     }
 
     private List<SpaceObject> ScatterPlanets(int number)

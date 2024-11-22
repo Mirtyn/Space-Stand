@@ -1,139 +1,163 @@
 using UnityEngine;
 using SpaceStand.Planets.Attributes;
-using System;
 using Random = UnityEngine.Random;
-using UnityEngine.UIElements;
-using System.Collections.Generic;
+using Scrblr.Core;
+using SpaceStand.Attributes;
+using System.IO;
 
 public class Planet : SpaceObject
 {
     public Planet(Vector2 position, SpaceObjectVisual visual) : base(position, visual)
     {
-
+        attributes = new PlanetAttributes();
+        attributes.GetAttributesAsJson();
+        //Debug.Log(PLANET_DATA_DIRECTIORY);
+        //File.WriteAllText()
     }
 }
 
 
 public class PlanetAttributes : ISpaceObjectAttributes
 {
-    private string name;
-    private int temperature;
+    public string Name;
+    public int Temperature;
 
-    private PlanetSize size;
-    private PlanetType type;
-    private ClimateType climate;
-    private SoilType coreSoil;
-    private SoilType surfaceSoil;
-    private MineralsType minerals;
-    private VegitaitionType vegitation;
+    public PlanetSize Size;
+    public PlanetType Type;
+    public ClimateType Climate;
+    public CoreSoilType CoreSoil;
+    public SurfaceSoilType SurfaceSoil;
+    public MineralsType Minerals;
+    public VegitaitionType Vegitation;
 
     public PlanetAttributes()
     {
         PlanetGenerationSettingsSO planetGenerationSettings = SpaceGenerator.Instance.PlanetGenerationSettings;
 
-        temperature = Random.Range(planetGenerationSettings.MinTemperature, planetGenerationSettings.MaxTemperature + 1);
-        size = (PlanetSize)Random.Range(0, 3);
-        type = (PlanetType)Random.Range(1, 5);
+        Temperature = Random.Range(planetGenerationSettings.MinTemperature, planetGenerationSettings.MaxTemperature + 1);
+        Size = (PlanetSize)Random.Range(0, 3);
+        Type = (PlanetType)Random.Range(1, 5);
 
-        if (temperature >= 110)
+        if (Temperature >= 110)
         {
-            type = PlanetType.Lava;
+            Type = PlanetType.Lava;
         }
 
-        switch (type)
+        switch (Type)
         {
             case PlanetType.Terrestrial:
-                if (temperature >= 80)
+                if (Temperature >= 80)
                 {
-                    climate = ClimateType.Volcanic;
+                    Climate = ClimateType.Volcanic;
                 }
-                else if (temperature >= -10)
+                else if (Temperature >= -10)
                 {
-                    climate = ClimateType.Dry;
+                    Climate = ClimateType.Dry;
                 }
                 else
                 {
-                    climate = ClimateType.Frozen;
+                    Climate = ClimateType.Frozen;
                 }
                 break;
 
             case PlanetType.Ocean:
-                if (temperature >= 80)
+                if (Temperature >= 80)
                 {
-                    climate = ClimateType.Volcanic;
+                    Climate = ClimateType.Volcanic;
                 }
-                else if ( temperature >= -10)
+                else if ( Temperature >= -10)
                 {
-                    climate = ClimateType.Temperate;
+                    Climate = ClimateType.Temperate;
                 }
                 else
                 {
-                    climate = ClimateType.Frozen;
+                    Climate = ClimateType.Frozen;
                 }
                 break;
 
             case PlanetType.Gas:
-                climate = ClimateType.Dry;
+                Climate = ClimateType.Dry;
                 break;
 
             case PlanetType.Lava:
-                climate = ClimateType.Volcanic;
+                Climate = ClimateType.Volcanic;
                 break;
 
             case PlanetType.EarthLike:
-                if (temperature >= 80)
+                if (Temperature >= 80)
                 {
-                    climate = ClimateType.Volcanic;
+                    Climate = ClimateType.Volcanic;
                 }
-                else if (temperature >= 40)
+                else if (Temperature >= 40)
                 {
-                    climate = ClimateType.Dry;
+                    Climate = ClimateType.Dry;
                 }
-                else if (temperature >= 20)
+                else if (Temperature >= 20)
                 {
-                    climate = ClimateType.Tropical;
+                    Climate = ClimateType.Tropical;
                 }
-                else if (temperature >= -10)
+                else if (Temperature >= -10)
                 {
-                    climate = ClimateType.Temperate;
+                    Climate = ClimateType.Temperate;
                 }
                 else
                 {
-                    climate = ClimateType.Frozen;
+                    Climate = ClimateType.Frozen;
                 }
                 break;
         }
 
-        byte r;
+        var coreSoilTypes = Type.GetAttribute<CoreSoilTypeAttribute>().SoilTypes;
+        int length = coreSoilTypes.Length;
 
-        r = type switch
-        {
-            PlanetType.EarthLike => (byte)(SoilType.MotenStone | SoilType.Stone),
-            PlanetType.Gas => (byte)(SoilType.None),
-            PlanetType.Lava => (byte)(SoilType.MotenStone | SoilType.Stone),
-            PlanetType.Ocean => (byte)(SoilType.Stone),
-            PlanetType.Terrestrial => (byte)(SoilType.MotenStone | SoilType.Stone),
-        };
+        CoreSoil = coreSoilTypes[Random.Range(0, length)];
 
-        //coreSoil = (SoilType)GetRandomEnumValue(r);
+        //r = type switch
+        //{
+        //    PlanetType.EarthLike => (byte)(CoreSoilType.MoltenStone | CoreSoilType.Stone),
+        //    PlanetType.Gas => (byte)(CoreSoilType.None),
+        //    PlanetType.Lava => (byte)(CoreSoilType.MoltenStone | CoreSoilType.Stone),
+        //    PlanetType.Ocean => (byte)(CoreSoilType.Stone),
+        //    PlanetType.Terrestrial => (byte)(CoreSoilType.MoltenStone | CoreSoilType.Stone),
+        //};
+        //coreSoil = (CoreSoilType)GetRandomEnumValue(r);
+
+        var surfaceSoilTypes = Type.GetAttribute<SurfaceSoilTypeAttribute>().SoilTypes;
+        length = surfaceSoilTypes.Length;
+
+        SurfaceSoil = surfaceSoilTypes[Random.Range(0, length)];
+
+
+        var mineralsTypes = Type.GetAttribute<MineralTypeAttribute>().MineralTypes;
+        length = mineralsTypes.Length;
+
+        Minerals = mineralsTypes[Random.Range(0, length)];
+
+
+        var vegitationTypes = Climate.GetAttribute<VegitaitionTypeAttribute>().VegitationTypes;
+        length = vegitationTypes.Length;
+
+        Vegitation = vegitationTypes[Random.Range(0, length)];
     }
 
+    /*
     public int GetRandomEnumValue(byte value)
     {
-        List<int> values = new List<int>(); 
+        List<int> values = new List<int>();
         for (int i = 0; i < 8; i++)
         {
             if ((value & (1 << i)) != 0)
             {
                 values.Add(i);
 
-                
+
             }
         }
 
         int randomValue = values[(Random.Range(0, values.Count))];
         return randomValue;
     }
+    */
 
     public void GetAttributes()
     {
@@ -142,11 +166,11 @@ public class PlanetAttributes : ISpaceObjectAttributes
 
     public string GetName()
     {
-        return name;
+        return Name;
     }
 
-    public string GetAttributesAsString()
+    public string GetAttributesAsJson()
     {
-        return string.Empty;
+        return JsonUtility.ToJson(this);
     }
 }
