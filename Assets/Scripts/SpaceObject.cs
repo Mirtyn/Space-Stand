@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using SpaceStand.Attributes;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ public abstract class SpaceObject
 {
     protected Vector2 position;
     protected SpaceObjectVisual visual;
+    protected string JSonData;
     protected string description => attributes.GetDescription();
     protected string name => attributes.GetName();
     protected ISpaceObjectAttributes attributes;
@@ -19,6 +21,7 @@ public abstract class SpaceObject
 
     public void Clicked()
     {
+        //JsonConvert.
         SpaceObjectInspector.Instance.SetSpaceObject(name, description);
     }
 }
