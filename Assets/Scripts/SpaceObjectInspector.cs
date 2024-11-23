@@ -42,10 +42,7 @@ public class SpaceObjectInspector : ObjectBehaviour
         Instance = this;
         thisTransform = transform;
 
-        TravelButton.onClick.AddListener(() =>
-        {
-            OnTravelButtonPressed();
-        });
+        TravelButton.onClick.AddListener(OnTravelButtonPressed);
     }
 
     private void Update()

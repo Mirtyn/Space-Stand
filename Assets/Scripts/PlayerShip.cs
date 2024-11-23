@@ -1,14 +1,18 @@
+using System;
 using UnityEngine;
 
-public class PlayerShip : MonoBehaviour
+public class PlayerShip
 {
-    public static PlayerShip Instance { get; private set; }
-    private Transform thisTransform;
+    //public static PlayerShip PlayerShipInstance { get; private set; }
+    public Vector3 Position { get; set; }
 
-    private void Awake()
+    public PlayerShip(Vector3 position)
     {
-        Instance = this;
+        Position = position;
     }
 
-
+    public PlayerShip()
+    {
+        
+    }
 }

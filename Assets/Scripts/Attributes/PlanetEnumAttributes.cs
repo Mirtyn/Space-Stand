@@ -46,4 +46,15 @@ namespace SpaceStand.Attributes
             VegitationTypes = vegitationTypes;
         }
     }
+
+    [AttributeUsage(AttributeTargets.Field)]
+    public class ResourceAttribute : Attribute
+    {
+        public ResourceType[] ResourceTypes;
+
+        public ResourceAttribute(params ResourceType[] resourceTypes)
+        {
+            ResourceTypes = resourceTypes;
+        }
+    }
 }
