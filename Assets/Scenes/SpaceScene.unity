@@ -1486,7 +1486,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2d704087221d0345a7b41e5e57f961a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scrollSensitivity: 80
+  scrollSensitivity: 6
   zoomSpeed: 5
   zoomSteps: 32000000fa000000f4010000ee020000e8030000
   minDifferencReqForNextStep: 30

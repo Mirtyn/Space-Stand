@@ -56,7 +56,7 @@ public class PlayerController : ObjectBehaviour
         //p.z += -input.MouseScrollDelta * Time.deltaTime * scrollSensitivity;
 
         //Debug.Log($"scroll: {-input.MouseScrollDelta} DeltaTime: {Time.deltaTime} sensitivity: {scrollSensitivity} result: {-input.MouseScrollDelta * Time.deltaTime * scrollSensitivity}");
-        targetZoomLevel += -input.MouseScrollDelta * Time.deltaTime * scrollSensitivity;
+        targetZoomLevel += -input.MouseScrollDelta * scrollSensitivity;
 
         if (targetZoomLevel > (zoomSteps[targetZoomStep] + minDifferencReqForNextStep))
         {
@@ -100,7 +100,7 @@ public class PlayerController : ObjectBehaviour
 
         float prevSize = mainCamera.orthographicSize;
 
-        mainCamera.orthographicSize = Mathf.Lerp(mainCamera.orthographicSize, targetZoomLevel, Time.deltaTime * zoomSpeed);
+        mainCamera.orthographicSize = Mathf.Round(Mathf.Lerp(mainCamera.orthographicSize, targetZoomLevel, Time.deltaTime * zoomSpeed));
 
         difference *= (mainCamera.orthographicSize / prevSize) - 1;
         mainCamera.transform.position += difference;
