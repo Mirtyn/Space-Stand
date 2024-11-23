@@ -1,5 +1,6 @@
 using NUnit.Framework.Internal;
 using System.Collections.Generic;
+using System.Xml.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -52,36 +53,52 @@ public static class SpaceGenerator
         public int Seed { get; set; }
         public int MinPlanetCount { get; set; } = 1;
         public int MaxPlanetCount { get; set; } = 1;
-        public float MinPlanetRadius { get; set; } = 10;
-        public float MaxPlanetRadius { get; set; } = 24;
+        public float MinPlanetRadius { get; set; } = 4;
+        public float MaxPlanetRadius { get; set; } = 32;
+        public int SpaceSize { get; set; } = 4000;
+        public float MinPlanetRotateSpeed { get; set; } = 2f;
+        public float MaxPlanetRotateSpeed { get; set; } = 12f;
 
         public SpaceSettings()
         {
-            Seed = RandomGenerator.RandomSeed();
+            Seed = 0; // RandomGenerator.RandomSeed();
         }
+    }
+
+    public static SpaceSettings DefaultSpaceSettings()
+    {
+        return new SpaceSettings()
+        {
+            Seed = 0,
+            SpaceSize = 5000,
+            MinPlanetCount = 50,
+            MaxPlanetCount = 100,
+            MinPlanetRadius = 8f,
+            MaxPlanetRadius = 24f,
+            MinPlanetRotateSpeed = 2f,
+            MaxPlanetRotateSpeed = 12f,
+        };
     }
 
     public class IcosahedronSettings
     {
         public GameObject Parent { get; set; }
-        public float MinRadius { get; set; }
-        public float MaxRadius { get; set; }
-        public float MinOffset { get; set; }
-        public float MaxOffset { get; set; }
-        public bool AsignRandomColor { get; set; }
+        public float Radius { get; set; }
+        public float RadiusOffset { get; set; } = 0.1f; // 10%
         public int SubdivideSteps { get; set; }
-        public float MinRotateSpeed { get; set; } = 0f;
-        public float MaxRotateSpeed { get; set; } = 10f;        
+        public float RotateSpeed { get; set; }
+
         public Color32[] Colors { get; set; }
     }
 
     public class PlanetSettings : IcosahedronSettings
     {
+        public Vector3 Position { get; set; }
     }
 
     public class MoonSettings : IcosahedronSettings
     {
-        public int Count { get; set; }
+        public float Offset { get; set; }
     }
 
     public class AsteroidSettings : MoonSettings
@@ -95,9 +112,10 @@ public static class SpaceGenerator
 
     public static SpaceManager Generate(SpaceSettings settings)
     {
-        var spaceManager = new SpaceManager();
-
-        spaceManager.Space = new Space(2000, 500);
+        var spaceManager = new SpaceManager
+        {
+            Space = new Space(settings.SpaceSize, settings.Seed),
+        };
         
         var random = new RandomGenerator(settings.Seed);
 
@@ -106,55 +124,77 @@ public static class SpaceGenerator
         var root = GameObject.Find(_rootGameObjectName);
 
         GeneratePlanets(
-            planetCount, 
-            new PlanetSettings()
-            {
-                Parent = root,
-                MinRadius = settings.MinPlanetRadius,
-                MaxRadius = settings.MaxPlanetRadius,
-                MinOffset = spaceManager.Space.Size * -0.45f,
-                MaxOffset = spaceManager.Space.Size *  0.45f,
-                AsignRandomColor = true,
-                SubdivideSteps = 1,
-                Colors = _planetColors,
-            }, 
-            spaceManager);
+            planetCount,
+            root,
+            settings,
+            spaceManager,
+            random);
 
         return spaceManager;
     }
 
-    public static void GeneratePlanets(int count, PlanetSettings settings, SpaceManager spaceManager)
+    public static void GeneratePlanets(int count, GameObject parent, SpaceSettings settings, SpaceManager spaceManager, RandomGenerator random)
     {
         var _planetRootPrefab = Resources.Load<GameObject>(_planetRootPrefabName);
 
         for (var i = 0; i < count; i++)
         {
-            GeneratePlanet(settings, _planetRootPrefab, spaceManager);
+            random.Push();
+            
+            GeneratePlanet(
+                new PlanetSettings()
+                {
+                    Parent = parent,
+                    Radius = random.Value(settings.MinPlanetRadius, settings.MaxPlanetRadius),
+                    Position = new Vector3(
+                        random.Value(spaceManager.Space.Size * -0.5f, random.Value(spaceManager.Space.Size * 0.5f)),
+                        random.Value(spaceManager.Space.Size * -0.5f, random.Value(spaceManager.Space.Size * 0.5f)),
+                        0f),
+                    SubdivideSteps = 1,
+                    Colors = _planetColors,
+                    RotateSpeed = random.Value(settings.MinPlanetRotateSpeed, settings.MaxPlanetRotateSpeed),
+                },
+                _planetRootPrefab, 
+                spaceManager, 
+                random);
+
+            random.Pop();
         }
     }
 
-    public static void GeneratePlanet(PlanetSettings settings, GameObject prefab, SpaceManager spaceManager)
+    public static string GeneratePlanetName(RandomGenerator random)
     {
-        var random = new RandomGenerator();        
+        int nameStartLength = PlanetGenerationSettingsSO.PlanetNameStart.Length;
+        int nameEndLength = PlanetGenerationSettingsSO.PlanetNameEnd.Length;
 
-        var position = new Vector3(random.Value(settings.MinOffset, settings.MaxOffset), random.Value(settings.MinOffset, settings.MaxOffset), 0);
+        return PlanetGenerationSettingsSO.PlanetNameStart[random.Int(nameStartLength)] +
+            PlanetGenerationSettingsSO.PlanetNameStart[random.Int(0, nameStartLength)] +
+            "-" +
+            PlanetGenerationSettingsSO.PlanetNameEnd[random.Int(0, nameEndLength)] +
+            PlanetGenerationSettingsSO.PlanetNameEnd[random.Int(0, nameEndLength)] +
+            PlanetGenerationSettingsSO.PlanetNameEnd[random.Int(0, nameEndLength)];
+    }
 
-        var planetGameObject = UnityEngine.Object.Instantiate(prefab, position, Quaternion.identity);
+    public static void GeneratePlanet(PlanetSettings settings, GameObject prefab, SpaceManager spaceManager, RandomGenerator random)
+    {
+        var planetGameObject = UnityEngine.Object.Instantiate(prefab, settings.Position, Quaternion.identity);
 
         var spaceObjectVisual = planetGameObject.GetComponent<SpaceObjectVisual>();
 
         var planet = new Planet();
 
-        planet.Radius = random.Value(settings.MinRadius, settings.MaxRadius);
+        planet.Name = GeneratePlanetName(random);
+        planet.Radius = settings.Radius;
         planet.Seed = random.Seed;
-        planet.position = position;
+        planet.position = settings.Position;
         planet.visual = spaceObjectVisual;
 
         spaceObjectVisual.SetSpaceObject(planet);
 
         var meshFilter = planetGameObject.GetComponent<MeshFilter>();
 
-        GenerateIcosahedronMesh(settings, meshFilter, random);
+        var circleCollider2D = planetGameObject.GetComponent<CircleCollider2D>();
+        circleCollider2D.radius = GenerateIcosahedronMesh(settings, meshFilter, random) * 1.5f;
 
         planetGameObject.name = planet.name;
         planetGameObject.transform.SetParent(settings.Parent.transform, false);
@@ -166,69 +206,104 @@ public static class SpaceGenerator
         var axisAngle = random.Value(0, Mathf.PI * 2f);
 
         rotateBehaviour.Axis = new Vector3(Mathf.Sin(axisAngle), Mathf.Cos(axisAngle), 0f);
-        rotateBehaviour.Speed = random.Value(settings.MinRotateSpeed, settings.MaxRotateSpeed);
+        rotateBehaviour.Speed = settings.RotateSpeed;
 
 
 
         var _moonRootPrefab = Resources.Load<GameObject>(_moonRootPrefabName);
 
-        GenerateMoons(new MoonSettings
-        {
-            Parent = planetGameObject,
-            Count = random.Value(1, 5),
-            MinOffset = planet.Radius * 2.25f,
-            MaxOffset = planet.Radius * 3.75f,
-            MinRadius = planet.Radius * 0.15f,
-            MaxRadius = planet.Radius * 0.30f,
-            Colors = _moonColors
-        }, _moonRootPrefab, spaceManager);
+        GenerateMoons(planetGameObject, planet, random.Value(1, 5), _moonRootPrefab, spaceManager, random);
 
 
 
         var _asteroidRootPrefab = Resources.Load<GameObject>(_asteroidRootPrefabName);
 
-        GenerateMoons(new MoonSettings
-        {
-            Parent = planetGameObject,
-            Count = random.Value(4, 16),
-            MinOffset = planet.Radius * 1.25f,
-            MaxOffset = planet.Radius * 1.75f,
-            MinRadius = planet.Radius * 0.05f,
-            MaxRadius = planet.Radius * 0.10f,
-            Colors = _asteroidColors
-        }, _asteroidRootPrefab, spaceManager);
+        GenerateAsteroids(planetGameObject, planet, random.Value(4, 16), _asteroidRootPrefab, spaceManager, random);
+
+
+
+        random.Pop();
     }
 
-    public static void GenerateMoons(MoonSettings settings, GameObject prefab, SpaceManager spaceManager)
+    public static void GenerateMoons(
+        GameObject parent, 
+        Planet planet, 
+        int count, 
+        GameObject prefab, 
+        SpaceManager spaceManager, 
+        RandomGenerator random)
     {
-        for (var i = 0; i < settings.Count; i++)
+        for (var i = 0; i < count; i++)
         {
-            GenerateMoon(settings, prefab, spaceManager);
+            random.Push();
+
+            GenerateMoon(
+                new MoonSettings
+                {
+                    Parent = parent,
+                    Offset =  random.Value(planet.Radius * 2.25f, planet.Radius * 3.75f),
+                    Radius = random.Value(planet.Radius * 0.15f, planet.Radius * 0.30f),
+                    Colors = _asteroidColors,
+                    SubdivideSteps = 0,
+                },
+                prefab, 
+                spaceManager, 
+                random);
+
+            random.Pop();
         }
     }
 
-    public static void GenerateMoon(MoonSettings settings, GameObject prefab, SpaceManager spaceManager)
+    public static void GenerateAsteroids(
+        GameObject parent,
+        Planet planet,
+        int count,
+        GameObject prefab,
+        SpaceManager spaceManager,
+        RandomGenerator random)
     {
-        var random = new RandomGenerator();
+        for (var i = 0; i < count; i++)
+        {
+            random.Push();
 
+            GenerateMoon(
+                new MoonSettings
+                {
+                    Parent = parent,
+                    Offset = random.Value(planet.Radius * 2.25f, planet.Radius * 3.75f),
+                    Radius = random.Value(planet.Radius * 0.15f, planet.Radius * 0.30f),
+                    Colors = _asteroidColors,
+                    SubdivideSteps = 0,
+                },
+                prefab,
+                spaceManager,
+                random);
+
+            random.Pop();
+        }
+    }
+
+    public static void GenerateMoon(MoonSettings settings, GameObject prefab, SpaceManager spaceManager, RandomGenerator random)
+    {
         var parentRotateBehaviour = settings.Parent.GetComponent<RotateBehaviour>();
 
         var a = Vector3.Cross(parentRotateBehaviour.Axis, Vector3.back);
 
         a = Quaternion.AngleAxis(random.Value(0, 360), parentRotateBehaviour.Axis) * a;
 
-        var position = a * random.Value(settings.MinOffset, settings.MaxOffset);
+        var position = a * settings.Offset;
 
         var planetGameObject = UnityEngine.Object.Instantiate(prefab, position, Quaternion.identity);
 
         var spaceObjectVisual = planetGameObject.GetComponent<SpaceObjectVisual>();
 
-        var planet = new Planet();
-
-        planet.Radius = random.Value(settings.MinRadius, settings.MaxRadius);
-        planet.Seed = random.Seed;
-        planet.position = position;
-        planet.visual = spaceObjectVisual;
+        var planet = new Planet
+        {
+            Radius = settings.Radius,
+            Seed = random.Seed,
+            position = position,
+            visual = spaceObjectVisual
+        };
 
         spaceObjectVisual.SetSpaceObject(planet);
 
@@ -238,27 +313,17 @@ public static class SpaceGenerator
 
         planetGameObject.name = planet.name;
         planetGameObject.transform.SetParent(settings.Parent.transform, false);
-        //planetGameObject.transform.localScale = new Vector3(planet.Radius, planet.Radius, planet.Radius);
 
         AssignMaterialColor(settings, planetGameObject, random);
 
         var rotateBehaviour = planetGameObject.GetComponent<RotateBehaviour>();
 
         rotateBehaviour.enabled = false;
-
-        //var axisAngle = random.Value(0, Mathf.PI * 2f);
-
-        //rotateBehaviour.Axis = new Vector3(Mathf.Sin(axisAngle), Mathf.Cos(axisAngle), 0f);
-        //rotateBehaviour.Speed = random.Value(settings.MinRotateSpeed, settings.MaxRotateSpeed);
     }
 
     private static void AssignMaterialColor(IcosahedronSettings settings, GameObject gameObject, RandomGenerator random)
     {
         var material = new Material(gameObject.GetComponent<MeshRenderer>().material);
-
-        //var hue = _planetHues[random.Value(0, _planetHues.Length)];
-
-        //var color = Color.HSVToRGB(random.Value((hue - 10f) / 360f, (hue + 10f) / 360f), random.Value(0.8f, 1f), random.Value(0.2f, 0.5f));
 
         var color = settings.Colors[random.Value(0, _planetHues.Length)];
 
@@ -267,7 +332,7 @@ public static class SpaceGenerator
         gameObject.GetComponent<MeshRenderer>().material = material;
     }
 
-    private static void GenerateIcosahedronMesh(IcosahedronSettings settings, MeshFilter meshFilter, RandomGenerator random)
+    private static float GenerateIcosahedronMesh(IcosahedronSettings settings, MeshFilter meshFilter, RandomGenerator random)
     {
         var icosahedronGenerator = new IcosahedronGenerator();
 
@@ -294,13 +359,20 @@ public static class SpaceGenerator
             vertices[i * 3 + 2] = icosahedronGenerator.Vertices[poly.vertices[2]];
         }
 
+        var sqrRadius = 0f;
+
         for (int i = 0; i < vertices.Length; i++)
         {
             var o = new Vector3(vertices[i].x, vertices[i].y, vertices[i].z);
 
-            var t = o.normalized * random.Value(settings.MinRadius, settings.MaxRadius);
+            var t = o.normalized * (settings.Radius - random.Value(settings.RadiusOffset));
 
-            //var t = new Vector3(random.Value(-0.1f, 0.1f), random.Value(-0.1f, 0.1f), random.Value(-0.1f, 0.1f));
+            var r = t.sqrMagnitude;
+
+            if(r > sqrRadius)
+            {
+                sqrRadius = r;
+            }
 
             for (int j = 0; j < vertices.Length; j++)
             {
@@ -322,6 +394,8 @@ public static class SpaceGenerator
 
         //mesh.Optimize();
         mesh.RecalculateNormals();
+
+        return Mathf.Sqrt(sqrRadius);
     }
 
 

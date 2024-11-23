@@ -11,6 +11,7 @@ public abstract class SpaceObject
     protected string JSonData;
     public string description => attributes.GetDescription();
     public string name => attributes.GetName();
+
     public ISpaceObjectAttributes attributes;
 
     public SpaceObject()

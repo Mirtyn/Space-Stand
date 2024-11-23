@@ -6,9 +6,17 @@ using System.Threading.Tasks;
 
 public class RandomGenerator
 {
-    private int _seed;
-    private Random _random;
     private static Random _seedGenerator = new Random();
+
+    private int _seedOffset = 1;
+    private int _entriesIndex = 0;
+    private List<Entry> _entries = new List<Entry>();
+
+    private class Entry
+    {
+        internal int _seed;
+        internal Random _random;
+    }
 
     public RandomGenerator()
         : this(RandomSeed())
@@ -18,6 +26,8 @@ public class RandomGenerator
 
     public RandomGenerator(int? seed)
     {
+        _entries.Add(new Entry());
+
         ReSeed(seed ?? RandomSeed());
     }
 
@@ -28,7 +38,7 @@ public class RandomGenerator
 
     public int Seed
     {
-        get { return _seed; }
+        get { return _entries[_entriesIndex]._seed; }
     }
 
     public int ReSeed()
@@ -38,9 +48,26 @@ public class RandomGenerator
 
     public int ReSeed(int seed)
     {
-        _seed = seed;
-        _random = new Random(_seed);
-        return _seed;
+        _entries[_entriesIndex]._seed = seed;
+        _entries[_entriesIndex]._random = new Random(_entries[_entriesIndex]._seed);
+        return _entries[_entriesIndex]._seed;
+    }
+
+    public int Push()
+    {
+        _entries.Add(new Entry());
+        _entriesIndex++;
+        ReSeed(_entries[0]._seed + _seedOffset++);
+        return Seed;
+    }
+
+    public void Pop()
+    {
+        if(_entriesIndex > 0)
+        {
+            _entries.RemoveAt(_entriesIndex - 1);
+            _entriesIndex--;
+        }
     }
 
     public int Reset()
@@ -50,7 +77,7 @@ public class RandomGenerator
 
     public double Value()
     {
-        return _random.NextDouble();
+        return _entries[_entriesIndex]._random.NextDouble();
     }
 
     public double Value(double max)
@@ -60,7 +87,7 @@ public class RandomGenerator
 
     public double Value(double min, double max)
     {
-        return min + _random.NextDouble() * (max - min);
+        return min + _entries[_entriesIndex]._random.NextDouble() * (max - min);
     }
 
     public float Value(float max)
@@ -70,7 +97,7 @@ public class RandomGenerator
 
     public float Value(float min, float max)
     {
-        return min + (float)_random.NextDouble() * (max - min);
+        return min + (float)_entries[_entriesIndex]._random.NextDouble() * (max - min);
     }
 
     public int Value(int max)
@@ -80,7 +107,7 @@ public class RandomGenerator
 
     public int Value(int min, int max)
     {
-        return (int)(min + _random.NextDouble() * (max - min));
+        return (int)(min + _entries[_entriesIndex]._random.NextDouble() * (max - min));
     }
 
     public int Int()
@@ -95,7 +122,7 @@ public class RandomGenerator
 
     public int Int(int min, int max)
     {
-        return (int)(min + _random.NextDouble() * (max - min));
+        return (int)(min + _entries[_entriesIndex]._random.NextDouble() * (max - min));
     }
 
     public byte Byte()
@@ -110,7 +137,7 @@ public class RandomGenerator
 
     public byte Byte(int min, int max)
     {
-        return (byte)(min + _random.NextDouble() * (max - min));
+        return (byte)(min + _entries[_entriesIndex]._random.NextDouble() * (max - min));
     }
 
     public bool Bool()
