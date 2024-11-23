@@ -43,6 +43,15 @@ public class ShipInspector : ObjectBehaviour
         closeShipButton.onClick.AddListener(OnShipClosed);
     }
 
+    //// Test File saving and loading
+    //private void Start()
+    //{
+    //    PlayerShip player = new PlayerShip(new Vector3(3, 2, 0));
+    //    SaveGameData saveData = new SaveGameData(player);
+    //    SaveDataManager.SaveJSonToDirectory(SaveDataManager.SaveDataToJSon(saveData), SaveDataManager.SaveDataDirectory, SaveDataManager.MainSaveFileDirectory);
+    //    Debug.Log(SaveDataManager.ReadFile(SaveDataManager.SaveDataDirectory + SaveDataManager.MainSaveFileDirectory));
+    //}
+
     private void Update()
     {
         HandleInspectorMovement();

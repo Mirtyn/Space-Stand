@@ -1,22 +1,18 @@
 using System;
 using UnityEngine;
 
-public class PlayerShip : MonoBehaviour
+public class PlayerShip
 {
-    public static PlayerShip PlayerShipInstance { get; private set; }
-    private Transform thisTransform;
+    //public static PlayerShip PlayerShipInstance { get; private set; }
+    public Vector3 Position { get; set; }
 
-    //private ResourceHolder[] resources;
-
-    private void Awake()
+    public PlayerShip(Vector3 position)
     {
-        PlayerShipInstance = this;
+        Position = position;
+    }
 
-        //var values = Enum.GetNames(typeof(ResourceType));
-        //resources = new ResourceHolder[values.Length];
-        //for (int i = 0; i < values.Length; i++)
-        //{
-        //    resources[i] = new ResourceHolder(0, (ResourceType)i);
-        //}
+    public PlayerShip()
+    {
+        
     }
 }
