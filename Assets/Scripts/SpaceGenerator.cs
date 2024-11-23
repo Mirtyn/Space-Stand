@@ -10,6 +10,7 @@ public static class SpaceGenerator
     private static string _planetRootPrefabName = "PlanetRootPrefab";
     private static string _moonRootPrefabName = "MoonRootPrefab";
     private static string _asteroidRootPrefabName = "AsteroidRootPrefab";
+    private static string _gridCrossHairPrefabName = "GridCrossHairPrefab";
     private static IcosahedronGenerator _icosahedronGenerator = new IcosahedronGenerator();
     
     private static float[] _planetHues = new[]
@@ -27,7 +28,7 @@ public static class SpaceGenerator
             (byte)(color >> 16 & 0xff),
             (byte)(color >> 8 & 0xff),
             (byte)(color & 0xff),
-            (byte)(color >> 24 & 0xff));
+            255);
     }
 
     private static Color32[] _planetColors = new[]
@@ -84,6 +85,8 @@ public static class SpaceGenerator
         public float MinPlanetRotateSpeed { get; set; } = 2f;
         public float MaxPlanetRotateSpeed { get; set; } = 12f;
 
+        public int GridStepSize { get; set; } = 250;
+
         public SpaceSettings()
         {
             Seed = 0; // RandomGenerator.RandomSeed();
@@ -98,8 +101,8 @@ public static class SpaceGenerator
             SpaceSize = 5000,
             MinPlanetCount = 50,
             MaxPlanetCount = 100,
-            MinPlanetRadius = 8f,
-            MaxPlanetRadius = 24f,
+            MinPlanetRadius = 4f,
+            MaxPlanetRadius = 32f,
             MinPlanetRotateSpeed = 2f,
             MaxPlanetRotateSpeed = 12f,
         };
@@ -155,7 +158,37 @@ public static class SpaceGenerator
             spaceManager,
             random);
 
+        GenerateGrid(
+            root, 
+            settings, 
+            spaceManager, 
+            random);
+
         return spaceManager;
+    }
+
+    public static void GenerateGrid(GameObject parent, SpaceSettings settings, SpaceManager spaceManager, RandomGenerator random)
+    {
+        var _gridCrossHairPrefab = Resources.Load<GameObject>(_gridCrossHairPrefabName);
+
+        var steps = 1 + settings.SpaceSize / settings.GridStepSize;
+        var y = settings.SpaceSize * -0.5f;
+
+        for(var j = 0; j < steps; j++)
+        {
+            var x = settings.SpaceSize * -0.5f;
+
+            for (var i = 0; i < steps; i++)
+            {
+                var gridCrossHairGameObject = UnityEngine.Object.Instantiate(_gridCrossHairPrefab, new Vector3(x, y, 0), Quaternion.identity);
+
+                gridCrossHairGameObject.transform.SetParent(parent.transform, false);
+
+                x += settings.GridStepSize;
+            }
+
+            y += settings.GridStepSize;
+        }
     }
 
     public static void GeneratePlanets(int count, GameObject parent, SpaceSettings settings, SpaceManager spaceManager, RandomGenerator random)
@@ -171,6 +204,7 @@ public static class SpaceGenerator
                 {
                     Parent = parent,
                     Radius = random.Value(settings.MinPlanetRadius, settings.MaxPlanetRadius),
+                    RadiusOffset = random.Value(0.10f, 0.25f),
                     Position = new Vector3(
                         random.Value(spaceManager.Space.Size * -0.5f, random.Value(spaceManager.Space.Size * 0.5f)),
                         random.Value(spaceManager.Space.Size * -0.5f, random.Value(spaceManager.Space.Size * 0.5f)),
@@ -268,7 +302,8 @@ public static class SpaceGenerator
                     Parent = parent,
                     Offset =  random.Value(planet.Radius * 2.25f, planet.Radius * 3.75f),
                     Radius = random.Value(planet.Radius * 0.15f, planet.Radius * 0.30f),
-                    Colors = _asteroidColors,
+                    RadiusOffset = random.Value(0.05f, 0.15f),
+                    Colors = _moonColors,
                     SubdivideSteps = 0,
                 },
                 prefab, 
@@ -295,8 +330,9 @@ public static class SpaceGenerator
                 new MoonSettings
                 {
                     Parent = parent,
-                    Offset = random.Value(planet.Radius * 2.25f, planet.Radius * 3.75f),
-                    Radius = random.Value(planet.Radius * 0.15f, planet.Radius * 0.30f),
+                    Offset = random.Value(planet.Radius * 1.15f, planet.Radius * 1.75f),
+                    Radius = random.Value(planet.Radius * 0.05f, planet.Radius * 0.15f),
+                    RadiusOffset = random.Value(0.10f, 0.25f),
                     Colors = _asteroidColors,
                     SubdivideSteps = 0,
                 },
@@ -350,7 +386,7 @@ public static class SpaceGenerator
     {
         var material = new Material(gameObject.GetComponent<MeshRenderer>().material);
 
-        var color = settings.Colors[random.Value(0, _planetHues.Length)];
+        var color = settings.Colors[random.Value(0, settings.Colors.Length)];
 
         material.SetColor("_BaseColor", color);
 
@@ -390,7 +426,7 @@ public static class SpaceGenerator
         {
             var o = new Vector3(vertices[i].x, vertices[i].y, vertices[i].z);
 
-            var t = o.normalized * (settings.Radius - random.Value(settings.RadiusOffset));
+            var t = o.normalized * (settings.Radius - (settings.Radius * random.Value(settings.RadiusOffset)));
 
             var r = t.sqrMagnitude;
 
