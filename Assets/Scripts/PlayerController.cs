@@ -3,10 +3,17 @@ using UnityEngine;
 [RequireComponent(typeof(Camera))]
 public class PlayerController : ObjectBehaviour
 {
-    private Camera camera;
+    private Camera mainCamera;
     private PlayerInputs input;
-    [SerializeField] private float scrollSensitivity = 10f;
-    [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private float scrollSensitivity = 60f;
+    [SerializeField] private float zoomSpeed = 5f;
+    //[SerializeField] private float moveSpeed = 5f;
+
+    [SerializeField] private int[] zoomSteps = new int[] { 50, 250, 500, 750, 1000 };
+    [SerializeField] private float minDifferencReqForNextStep = 30f;
+    private float maxDistanceFromEndSteps = 10f;
+    private float targetZoomLevel = 250;
+    private int targetZoomStep = 1;
 
     [SerializeField] private Transform pointer;
     [SerializeField] private AnimationCurve pointerScaleCurve;
@@ -24,9 +31,11 @@ public class PlayerController : ObjectBehaviour
     private Vector3 pointerStartPosition;
     private Vector3 pointerTargetPosition;
 
+    private Vector2 prevFrameMouseScreenPos;
+
     private void Awake()
     {
-        camera = GetComponent<Camera>();
+        mainCamera = GetComponent<Camera>();
     }
 
     private void Update()
@@ -42,24 +51,69 @@ public class PlayerController : ObjectBehaviour
 
     private void HandleCameraScroll()
     {
-        var p = camera.transform.position;
+        var p = mainCamera.transform.position;
 
         //p.z += -input.MouseScrollDelta * Time.deltaTime * scrollSensitivity;
 
-        camera.orthographicSize += -input.MouseScrollDelta * Time.deltaTime * scrollSensitivity;
+        targetZoomLevel += -input.MouseScrollDelta * Time.deltaTime * scrollSensitivity;
+
+        if (targetZoomLevel > (zoomSteps[targetZoomStep] + minDifferencReqForNextStep))
+        {
+            targetZoomStep++;
+
+            if (targetZoomStep >= zoomSteps.Length)
+            {
+                targetZoomStep = zoomSteps.Length - 1;
+            }
+
+            targetZoomLevel = zoomSteps[targetZoomStep];
+        }
+        else if (targetZoomLevel < (zoomSteps[targetZoomStep] - minDifferencReqForNextStep))
+        {
+            targetZoomStep--;
+
+            if (targetZoomStep < 0)
+            {
+                targetZoomStep = 0;
+            }
+
+            targetZoomLevel = zoomSteps[targetZoomStep];
+        }
+
+        if (targetZoomLevel > zoomSteps[zoomSteps.Length - 1] + maxDistanceFromEndSteps)
+        {
+            targetZoomLevel = zoomSteps[zoomSteps.Length - 1] + maxDistanceFromEndSteps;
+        }
+        else if (targetZoomLevel < zoomSteps[0] - maxDistanceFromEndSteps)
+        {
+            targetZoomLevel = zoomSteps[0] - maxDistanceFromEndSteps;
+        }
+
+        targetZoomLevel = Mathf.Lerp(targetZoomLevel, zoomSteps[targetZoomStep], Time.deltaTime * (zoomSpeed / 25));
+
+        mainCamera.orthographicSize = Mathf.Lerp(mainCamera.orthographicSize, targetZoomLevel, Time.deltaTime * zoomSpeed);
+        //mainCamera.orthographicSize = targetZoomLevel;
     }
 
     private void HandleCameraMovement()
     {
-        var v2 = input.MoveInput * Time.deltaTime * moveSpeed;
-        Vector3 pos = new Vector3(v2.x, v2.y);
-        camera.transform.position += pos;
+        if (input.Mouse1Or2Pressed)
+        {
+            Vector2 currentMouseScreenPos = Input.mousePosition;
+            Vector3 prevFrameMouseWorldPos = mainCamera.ScreenToWorldPoint(prevFrameMouseScreenPos);
+            Vector3 currentMouseWorldPos = mainCamera.ScreenToWorldPoint(currentMouseScreenPos);
+
+            Vector3 difference = prevFrameMouseWorldPos - currentMouseWorldPos;
+            mainCamera.transform.position += difference;
+        }
+
+        prevFrameMouseScreenPos = Input.mousePosition;
     }
 
     private void HandleMouseHover()
     {
         Vector2 mouseScreenPos = Input.mousePosition;
-        Vector3 mouseWorldPos = camera.ScreenToWorldPoint(mouseScreenPos);
+        Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(mouseScreenPos);
         mouseWorldPos.z = 0;
 
         var collider = Physics2D.OverlapPoint(mouseWorldPos);
@@ -142,6 +196,9 @@ public class PlayerController : ObjectBehaviour
 
         input.Mouse0Down = Input.GetMouseButtonDown(0);
 
+        input.Mouse1Or2Pressed = Input.GetMouseButton(1) || Input.GetMouseButton(2);
+        //input.Mouse1Or2Up = Input.GetMouseButtonUp(1) || Input.GetMouseButtonUp(2);
+
         if (Input.GetKey(KeyCode.W))
         {
             input.MoveInput.y++;
@@ -171,5 +228,6 @@ public struct PlayerInputs
 {
     public float MouseScrollDelta;
     public bool Mouse0Down;
+    public bool Mouse1Or2Pressed;
     public Vector2 MoveInput;
 }
