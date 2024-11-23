@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 4108061221199767643}
   - component: {fileID: 3294330268342851781}
   - component: {fileID: -3415003942997610880}
+  - component: {fileID: 8693664712459447102}
+  - component: {fileID: 6216613628316013757}
   m_Layer: 0
   m_Name: PlanetRootPrefab
   m_TagString: Untagged
@@ -66,7 +68,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: d739bef66cac7e24f92949d9c0b56761, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -134,5 +136,29 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 06455fc69eddf4f46a2f59a3c8469594, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8693664712459447102
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3771961192055281879}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c20b57e6969473438c649b1a551f6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6216613628316013757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3771961192055281879}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26078e25fee403544abf1395cce38d59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

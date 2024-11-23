@@ -14,7 +14,7 @@ public class RootBehaviour : ObjectBehaviour
     {
         if (Game.Space == null)
         {
-            var result = PlanetGenerator.Generate(new PlanetGenerator.Settings());
+            var result = PlanetGenerator.Generate(new PlanetGenerator.PlanetSettings());
 
             Game.Space = result.Space;
         }

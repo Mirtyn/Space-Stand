@@ -6,12 +6,21 @@ using System.IO;
 
 public class Planet : SpaceObject
 {
+    public int Seed { get; set; }
+    public float Radius { get; set; }
+
     public Planet(Vector2 position, SpaceObjectVisual visual) : base(position, visual)
     {
         attributes = new PlanetAttributes();
         attributes.GetAttributesAsJson();
         //Debug.Log(PLANET_DATA_DIRECTIORY);
         //File.WriteAllText()
+    }
+
+    public Planet() : base()
+    {
+        attributes = new PlanetAttributes();
+        attributes.GetAttributesAsJson();
     }
 }
 
