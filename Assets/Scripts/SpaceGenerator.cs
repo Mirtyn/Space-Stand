@@ -21,6 +21,15 @@ public static class SpaceGenerator
         90f,
     };
 
+    private static Color32 Color32From(int color)
+    {
+        return new Color32(
+            (byte)(color >> 16 & 0xff),
+            (byte)(color >> 8 & 0xff),
+            (byte)(color & 0xff),
+            (byte)(color >> 24 & 0xff));
+    }
+
     private static Color32[] _planetColors = new[]
     {
         new Color32(50, 102, 0, 255),
@@ -28,6 +37,22 @@ public static class SpaceGenerator
         new Color32(186, 66, 0, 255),
         new Color32(0, 114, 186, 255),
         new Color32(177, 0, 42, 255),
+        Color32From(0xFFA0FB),
+        Color32From(0x9666FF),
+        Color32From(0x89FFFD),
+        Color32From(0x3A6BFF),
+        Color32From(0x420d0d),
+        Color32From(0x324c15),
+        Color32From(0x028b02),
+        Color32From(0x056655),
+        //Color32From(0xFFA0FB),
+        //Color32From(0xFFA0FB),
+        //Color32From(0xFFA0FB),
+        //Color32From(0xFFA0FB),
+        //Color32From(0xFFA0FB),
+        //Color32From(0xFFA0FB),
+        //Color32From(0xFFA0FB),
+        //Color32From(0xFFA0FB),
     };
 
     private static Color32[] _moonColors = new[]
