@@ -41,70 +41,100 @@ public static class PlanetGenerator
 
         var meshFilter = planetGameObject.GetComponent<MeshFilter>();
 
-        const float width = 1f;
-        const float height = 1f;
-        const int widthSegments = 4;
-        const int heightSegments = 4;
-
-        const float width_half = width / 2;
-        const float height_half = height / 2;
-
-        const int gridX = widthSegments;
-        const int gridY = heightSegments;
-
-        const int gridX1 = gridX + 1;
-        const int gridY1 = gridY + 1;
-
-        const float segment_width = width / (float)gridX;
-        const float segment_height = height / (float)gridY;
-
-        var vertices = new List<Vector3>();
-        var normals = new List<Vector3>();
+        //var vertices = new List<Vector3>();
+        //var normals = new List<Vector3>();
         var uvs = new List<Vector2>();
         var triangles = new List<int>();
 
-        for (var iy = 0; iy < gridY1; iy++)
+
+        var icosahedronGenerator = new IcosahedronGenerator();
+        icosahedronGenerator.Initialize();
+        icosahedronGenerator.Subdivide(1);
+
+        int vertexCount = icosahedronGenerator.Polygons.Count * 3;
+        int[] indices = new int[vertexCount];
+
+        Vector3[] vertices = new Vector3[vertexCount];
+        Vector3[] normals = new Vector3[vertexCount];
+
+        for (int i = 0; i < icosahedronGenerator.Polygons.Count; i++)
         {
-            float y = iy * segment_height - height_half;
+            var poly = icosahedronGenerator.Polygons[i];
 
-            for (var ix = 0; ix < gridX1; ix++)
-            {
-                float x = ix * segment_width - width_half;
+            indices[i * 3 + 0] = i * 3 + 0;
+            indices[i * 3 + 1] = i * 3 + 1;
+            indices[i * 3 + 2] = i * 3 + 2;
 
-                float xx = x + width_half;
+            vertices[i * 3 + 0] = icosahedronGenerator.Vertices[poly.vertices[0]];
+            vertices[i * 3 + 1] = icosahedronGenerator.Vertices[poly.vertices[1]];
+            vertices[i * 3 + 2] = icosahedronGenerator.Vertices[poly.vertices[2]];
 
-                float yy = y + height_half;
-
-                float xCircle = xx + width_half * Mathf.Sqrt(1f - 0.5f * yy * yy);
-                float yCircle = yy * Mathf.Sqrt(1f - 0.5f * xx * xx);
-
-                //vertices.Add(new Vector3(x, -y, 0));
-                vertices.Add(new Vector3(xCircle, -yCircle, 0));
-
-                normals.Add(new Vector3(0, 0, -1));
-
-                uvs.Add(new Vector2(ix / gridX, 1f - (iy / gridY)));
-            }
+            normals[i * 3 + 0] = icosahedronGenerator.Vertices[poly.vertices[0]];
+            normals[i * 3 + 1] = icosahedronGenerator.Vertices[poly.vertices[1]];
+            normals[i * 3 + 2] = icosahedronGenerator.Vertices[poly.vertices[2]];
         }
 
-        for (var iy = 0; iy < gridY; iy++)
-        {
-            for (var ix = 0; ix < gridX; ix++)
-            {
-                int a = ix + gridX1 * iy;
-                int b = ix + gridX1 * (iy + 1);
-                int c = (ix + 1) + gridX1 * (iy + 1);
-                int d = (ix + 1) + gridX1 * iy;
 
-                triangles.Add(a);
-                triangles.Add(d);
-                triangles.Add(b);
 
-                triangles.Add(b);
-                triangles.Add(d);
-                triangles.Add(c);
-            }
-        }
+        //const float width = 1f;
+        //const float height = 1f;
+        //const int widthSegments = 4;
+        //const int heightSegments = 4;
+
+        //const float width_half = width / 2;
+        //const float height_half = height / 2;
+
+        //const int gridX = widthSegments;
+        //const int gridY = heightSegments;
+
+        //const int gridX1 = gridX + 1;
+        //const int gridY1 = gridY + 1;
+
+        //const float segment_width = width / (float)gridX;
+        //const float segment_height = height / (float)gridY;
+
+        //for (var iy = 0; iy < gridY1; iy++)
+        //{
+        //    float y = iy * segment_height - height_half;
+
+        //    for (var ix = 0; ix < gridX1; ix++)
+        //    {
+        //        float x = ix * segment_width - width_half;
+
+        //        float xx = x + width_half;
+
+        //        float yy = y + height_half;
+
+        //        float xCircle = xx + width_half * Mathf.Sqrt(1f - 0.5f * yy * yy);
+        //        float yCircle = yy * Mathf.Sqrt(1f - 0.5f * xx * xx);
+
+        //        //vertices.Add(new Vector3(x, -y, 0));
+        //        vertices.Add(new Vector3(xCircle, -yCircle, 0));
+
+        //        normals.Add(new Vector3(0, 0, -1));
+
+        //        uvs.Add(new Vector2(ix / gridX, 1f - (iy / gridY)));
+        //    }
+        //}
+
+        //for (var iy = 0; iy < gridY; iy++)
+        //{
+        //    for (var ix = 0; ix < gridX; ix++)
+        //    {
+        //        int a = ix + gridX1 * iy;
+        //        int b = ix + gridX1 * (iy + 1);
+        //        int c = (ix + 1) + gridX1 * (iy + 1);
+        //        int d = (ix + 1) + gridX1 * iy;
+
+        //        triangles.Add(a);
+        //        triangles.Add(d);
+        //        triangles.Add(b);
+
+        //        triangles.Add(b);
+        //        triangles.Add(d);
+        //        triangles.Add(c);
+        //    }
+        //}
 
 
         //var vertices = new Vector3[]
@@ -130,10 +160,10 @@ public static class PlanetGenerator
 
         mesh.Clear();
 
-        mesh.vertices = vertices.ToArray();
-        mesh.normals = normals.ToArray();
-        mesh.uv = uvs.ToArray();
-        mesh.triangles = triangles.ToArray();
+        mesh.vertices = vertices;
+        mesh.normals = normals;
+        //mesh.uv = uvs.ToArray();
+        mesh.SetTriangles(triangles, 0);
         //mesh.colors32 = colors;
 
         //mesh.Optimize();
