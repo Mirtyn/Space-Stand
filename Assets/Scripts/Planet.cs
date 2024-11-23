@@ -20,6 +20,7 @@ public class Planet : SpaceObject
 public class PlanetAttributes : ISpaceObjectAttributes
 {
     public string Name;
+    public string Description;
     public int Temperature;
 
     public PlanetSize Size;
@@ -147,6 +148,15 @@ public class PlanetAttributes : ISpaceObjectAttributes
         length = vegitationTypes.Length;
 
         Vegitation = vegitationTypes[Random.Range(0, length)];
+
+        Description = $"Temperature: {Temperature}\n" +
+            $"Size: {Size.ToString()}\n" +
+            $"PlanetType: {Type}\n" +
+            $"Climate: {Climate}\n" +
+            $"Surface soil: {SurfaceSoil}\n" +
+            $"Core soil: {CoreSoil}\n" +
+            $"Resource density: {Minerals}\n" +
+            $"Vegitation: {Vegitation}";
     }
 
     /*
@@ -176,5 +186,10 @@ public class PlanetAttributes : ISpaceObjectAttributes
     public string GetAttributesAsJson()
     {
         return JsonUtility.ToJson(this);
+    }
+
+    public string GetDescription()
+    {
+        return Description;
     }
 }

@@ -7,7 +7,7 @@ public abstract class SpaceObject
 {
     protected Vector2 position;
     protected SpaceObjectVisual visual;
-    protected string description => attributes.GetAttributesAsJson();
+    protected string description => attributes.GetDescription();
     protected string name => attributes.GetName();
     protected ISpaceObjectAttributes attributes;
 
@@ -27,6 +27,7 @@ public abstract class SpaceObject
 public interface ISpaceObjectAttributes
 {
     public abstract string GetAttributesAsJson();
+    public abstract string GetDescription();
     public abstract string GetName();
 }
 

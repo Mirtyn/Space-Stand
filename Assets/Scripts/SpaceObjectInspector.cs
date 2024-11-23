@@ -15,18 +15,21 @@ public class SpaceObjectInspector : ObjectBehaviour
     private bool inView;
 
     [SerializeField] private float inspectorMoveDeltaSpeed = 1f;
-    private float inspectorMoveDelta = 0f;
+    private float inspectorMoveDelta = 1f;
 
-    public bool InView 
-    { 
+    public bool InView
+    {
         get
         {
-            return inView; 
+            return inView;
         }
         set
         {
-            inspectorMoveDelta = 0;
-            inView = value;
+            if (inView != value)
+            {
+                inspectorMoveDelta = 0;
+                inView = value;
+            }
         }
     }
 
