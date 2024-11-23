@@ -1387,7 +1387,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -1486,8 +1486,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2d704087221d0345a7b41e5e57f961a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scrollSensitivity: 50
-  moveSpeed: 50
+  scrollSensitivity: 80
+  zoomSpeed: 5
+  zoomSteps: 32000000fa000000f4010000ee020000e8030000
+  minDifferencReqForNextStep: 30
   pointer: {fileID: 1763710062}
   pointerScaleCurve:
     serializedVersion: 2
