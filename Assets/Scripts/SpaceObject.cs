@@ -5,11 +5,17 @@ using UnityEngine;
 
 public abstract class SpaceObject
 {
-    protected Vector2 position;
-    protected SpaceObjectVisual visual;
-    protected string description => attributes.GetDescription();
-    protected string name => attributes.GetName();
-    protected ISpaceObjectAttributes attributes;
+    public Vector2 position;
+    
+    public SpaceObjectVisual visual;
+    public string description => attributes.GetDescription();
+    public string name => attributes.GetName();
+    public ISpaceObjectAttributes attributes;
+
+
+    public SpaceObject()
+    {
+    }
 
     public SpaceObject(Vector2 position, SpaceObjectVisual visual)
     {
