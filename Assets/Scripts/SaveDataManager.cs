@@ -1,16 +1,15 @@
-using UnityEngine;
+using Newtonsoft.Json;
+using System.IO;
 
-public class SaveDataManager : MonoBehaviour
+public static class SaveDataManager
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public static string SaveDataToJSon(SaveGameData data)
     {
-        
+        return JsonConvert.SerializeObject(data);
     }
 
-    // Update is called once per frame
-    void Update()
+    public static void SaveJSonToDirectory(string jsonString,  string directory)
     {
-        
+        File.WriteAllText(directory, jsonString);
     }
 }
