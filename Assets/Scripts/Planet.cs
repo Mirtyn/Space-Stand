@@ -9,13 +9,12 @@ public class Planet : SpaceObject
 {
     public int Seed { get; set; }
     public float Radius { get; set; }
+    public string Name { get { return ((PlanetAttributes)attributes).Name; } set { ((PlanetAttributes)attributes).Name = value; } }
 
     public Planet(Vector2 position, SpaceObjectVisual visual) : base(position, visual)
     {
         attributes = new PlanetAttributes();
         JSonData = JsonConvert.SerializeObject(attributes);
-        //Debug.Log(JSonData);
-        //File.WriteAllText()
     }
 
     public Planet() : base()
@@ -47,12 +46,7 @@ public class PlanetAttributes : ISpaceObjectAttributes
         int nameStartLength = PlanetGenerationSettingsSO.PlanetNameStart.Length;
         int nameEndLength = PlanetGenerationSettingsSO.PlanetNameEnd.Length;
 
-        Name = PlanetGenerationSettingsSO.PlanetNameStart[Random.Range(0, nameStartLength)] +
-            PlanetGenerationSettingsSO.PlanetNameStart[Random.Range(0, nameStartLength)] +
-            "-" +
-            PlanetGenerationSettingsSO.PlanetNameEnd[Random.Range(0, nameEndLength)] +
-            PlanetGenerationSettingsSO.PlanetNameEnd[Random.Range(0, nameEndLength)] +
-            PlanetGenerationSettingsSO.PlanetNameEnd[Random.Range(0, nameEndLength)];
+        Name = SpaceGenerator.GeneratePlanetName(new RandomGenerator());
 
         Temperature = Random.Range(PlanetGenerationSettingsSO.MinTemperature, PlanetGenerationSettingsSO.MaxTemperature + 1);
         Size = (PlanetSize)Random.Range(0, 3);

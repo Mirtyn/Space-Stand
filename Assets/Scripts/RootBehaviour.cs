@@ -14,12 +14,7 @@ public class RootBehaviour : ObjectBehaviour
     {
         if (Game.SpaceManager == null)
         {
-            Game.SpaceManager = SpaceGenerator.Generate(
-                new SpaceGenerator.SpaceSettings()
-                {
-                    MinPlanetCount = 20,
-                    MaxPlanetCount = 50,
-                });
+            Game.SpaceManager = SpaceGenerator.Generate(SpaceGenerator.DefaultSpaceSettings());
         }
     }
 
@@ -31,12 +26,7 @@ public class RootBehaviour : ObjectBehaviour
             {
                 Game.SpaceManager.Destroy();
 
-                Game.SpaceManager = SpaceGenerator.Generate(
-                    new SpaceGenerator.SpaceSettings()
-                    {
-                        MinPlanetCount = 20,
-                        MaxPlanetCount = 50,
-                    });
+                Game.SpaceManager = SpaceGenerator.Generate(SpaceGenerator.DefaultSpaceSettings());
             }
         }
     }
