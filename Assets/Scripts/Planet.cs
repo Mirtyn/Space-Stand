@@ -3,14 +3,19 @@ using SpaceStand.Planets.Attributes;
 using Random = UnityEngine.Random;
 using SpaceStand.Attributes;
 using Newtonsoft.Json;
+using System.Linq;
 
 public class Planet : SpaceObject
 {
+    private int rescource1Miners;
+    private int rescource2Miners;
+    private int rescource3Miners;
+
     public Planet(Vector2 position, SpaceObjectVisual visual) : base(position, visual)
     {
         attributes = new PlanetAttributes();
         JSonData = JsonConvert.SerializeObject(attributes);
-        Debug.Log(JSonData);
+        //Debug.Log(JSonData);
         //File.WriteAllText()
     }
 }
@@ -27,7 +32,8 @@ public class PlanetAttributes : ISpaceObjectAttributes
     public ClimateType Climate;
     public CoreSoilType CoreSoil;
     public SurfaceSoilType SurfaceSoil;
-    public MineralsType Minerals;
+    //public MineralsType Minerals;
+    public ResourceType[] PlanetResources;
     public VegitaitionType Vegitation;
 
     public PlanetAttributes()
@@ -137,24 +143,52 @@ public class PlanetAttributes : ISpaceObjectAttributes
         SurfaceSoil = surfaceSoilTypes[Random.Range(0, length)];
 
 
-        var mineralsTypes = Type.GetAttribute<MineralTypeAttribute>().MineralTypes;
-        length = mineralsTypes.Length;
+        var resourceTypes = Type.GetAttribute<ResourceAttribute>().ResourceTypes.ToList();
+        var count = resourceTypes.Count;
 
-        Minerals = mineralsTypes[Random.Range(0, length)];
+        //Minerals = mineralsTypes[Random.Range(0, length)];
+        int numResources;
+        if (CoreSoil == CoreSoilType.MoltenStone)
+        {
+            numResources = 3;
+        }
+        else
+        {
+            numResources = Random.Range(2, 4);
+        }
 
+        PlanetResources = new ResourceType[numResources];
+        int r;
+        for (int i = 0; i < numResources; i++)
+        {
+            r = Random.Range(0, count);
+            
+            PlanetResources[i] = resourceTypes[r];
+            resourceTypes.RemoveAt(r);
+            count--; 
+        }
 
         var vegitationTypes = Climate.GetAttribute<VegitaitionTypeAttribute>().VegitationTypes;
         length = vegitationTypes.Length;
 
         Vegitation = vegitationTypes[Random.Range(0, length)];
 
+        string resourcesText = "Planet resources: \n";
+        
+        for (int i = 0; i < PlanetResources.Length; i++)
+        {
+            resourcesText += PlanetResources[i] + "\n";
+        }
+
+
         Description = $"Temperature: {Temperature}\n" +
             $"Size: {Size.ToString()}\n" +
             $"PlanetType: {Type}\n" +
             $"Climate: {Climate}\n" +
             $"Surface soil: {SurfaceSoil}\n" +
-            $"Core soil: {CoreSoil}\n" +
-            $"Resource density: {Minerals}\n" +
+            $"Core soil: {CoreSoil}\n" + 
+            resourcesText +
+            //$"Resource density: {Minerals}\n" +
             $"Vegitation: {Vegitation}";
     }
 

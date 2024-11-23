@@ -48,23 +48,23 @@ namespace SpaceStand.Planets.Attributes
         None,
         [CoreSoilType(CoreSoilType.Stone)]
         [SurfaceSoilType(SurfaceSoilType.Stone)]
-        [MineralType(MineralsType.Abundant)]
+        [ResourceAttribute(ResourceType.Coal, ResourceType.Copper, ResourceType.Gold, ResourceType.Iron, ResourceType.Mithril)]
         Terrestrial,
         [CoreSoilType(CoreSoilType.Stone)]
         [SurfaceSoilType(SurfaceSoilType.Ocean)]
-        [MineralType(MineralsType.Abundant, MineralsType.Common)]
+        [ResourceAttribute(ResourceType.Coal, ResourceType.Copper, ResourceType.Gold, ResourceType.Iron, ResourceType.Mithril)]
         Ocean,
         [CoreSoilType(CoreSoilType.Stone, CoreSoilType.MoltenStone)]
         [SurfaceSoilType(SurfaceSoilType.Dirt, SurfaceSoilType.Sand)]
-        [MineralType(MineralsType.Abundant, MineralsType.Common, MineralsType.Rare)]
+        [ResourceAttribute(ResourceType.Coal, ResourceType.Copper, ResourceType.Gold, ResourceType.Iron, ResourceType.Wood, ResourceType.Rubber)]
         EarthLike,
         [CoreSoilType(CoreSoilType.None, CoreSoilType.MoltenStone, CoreSoilType.Stone)]
         [SurfaceSoilType(SurfaceSoilType.None)]
-        [MineralType(MineralsType.Rare, MineralsType.None)]
+        [ResourceAttribute(ResourceType.Copper, ResourceType.Gold, ResourceType.Iron, ResourceType.Uranium)]
         Gas,
         [CoreSoilType(CoreSoilType.Stone, CoreSoilType.MoltenStone)]
         [SurfaceSoilType(SurfaceSoilType.Lava)]
-        [MineralType(MineralsType.Abundant, MineralsType.Common, MineralsType.Rare, MineralsType.None)]
+        [ResourceAttribute(ResourceType.Gold, ResourceType.Mithril, ResourceType.Uranium)]
         Lava
     }
 
