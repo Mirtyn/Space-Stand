@@ -1,14 +1,20 @@
+using NUnit.Framework;
 using UnityEngine;
 
-public class Space : MonoBehaviour
+public class Space
 {
-    public static Space Instance { get; private set; }
+    public int? Seed { get; set; }
 
-    public int Width = 2000;
-    public int Height = 2000;
+    public int Size { get; set; }
 
-    private void Awake()
+    public Space()
+        : this(2000, null)
     {
-        Instance = this;
+    }
+
+    public Space(int size, int? seed)
+    {
+        Seed = seed ?? RandomGenerator.RandomSeed();
+        Size = size;
     }
 }

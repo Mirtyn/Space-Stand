@@ -10,7 +10,12 @@ public class IcosahedronGenerator
     public List<Polygon> Polygons { get => polygons; private set => polygons = value; }
     public List<Vector3> Vertices { get => vertices; private set => vertices = value; }
 
-    public void Initialize()
+    public IcosahedronGenerator()
+    {
+        Setup();
+    }
+
+    private void Setup()
     {
         polygons = new List<Polygon>();
         vertices = new List<Vector3>();

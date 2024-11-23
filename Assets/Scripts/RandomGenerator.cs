@@ -11,14 +11,19 @@ public class RandomGenerator
     private static Random _seedGenerator = new Random();
 
     public RandomGenerator()
-        : this(_seedGenerator.Next())
+        : this(RandomSeed())
     {
 
     }
 
     public RandomGenerator(int? seed)
     {
-        ReSeed(seed ?? _seedGenerator.Next());
+        ReSeed(seed ?? RandomSeed());
+    }
+
+    public static int RandomSeed()
+    {
+        return _seedGenerator.Next();
     }
 
     public int Seed
@@ -74,6 +79,21 @@ public class RandomGenerator
     }
 
     public int Value(int min, int max)
+    {
+        return (int)(min + _random.NextDouble() * (max - min));
+    }
+
+    public int Int()
+    {
+        return Int(0, int.MaxValue);
+    }
+
+    public int Int(int max)
+    {
+        return Int(0, max);
+    }
+
+    public int Int(int min, int max)
     {
         return (int)(min + _random.NextDouble() * (max - min));
     }

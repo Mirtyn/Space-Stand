@@ -6,5 +6,5 @@ public class GameManager
     
     public static GameManager Instance { get { return _instance; } }
 
-    public SpaceManager Space { get; set; }
+    public SpaceManager SpaceManager { get; set; }
 }

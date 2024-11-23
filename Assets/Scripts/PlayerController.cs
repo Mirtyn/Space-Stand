@@ -42,6 +42,10 @@ public class PlayerController : ObjectBehaviour
 
     private void HandleCameraScroll()
     {
+        var p = camera.transform.position;
+
+        //p.z += -input.MouseScrollDelta * Time.deltaTime * scrollSensitivity;
+
         camera.orthographicSize += -input.MouseScrollDelta * Time.deltaTime * scrollSensitivity;
     }
 

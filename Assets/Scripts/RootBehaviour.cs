@@ -12,11 +12,32 @@ public class RootBehaviour : ObjectBehaviour
 
     void Start()
     {
-        if (Game.Space == null)
+        if (Game.SpaceManager == null)
         {
-            var result = PlanetGenerator.Generate(new PlanetGenerator.PlanetSettings());
+            Game.SpaceManager = SpaceGenerator.Generate(
+                new SpaceGenerator.SpaceSettings()
+                {
+                    MinPlanetCount = 20,
+                    MaxPlanetCount = 50,
+                });
+        }
+    }
 
-            Game.Space = result.Space;
+    void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.F5)) 
+        {
+            if (Game.SpaceManager != null)
+            {
+                Game.SpaceManager.Destroy();
+
+                Game.SpaceManager = SpaceGenerator.Generate(
+                    new SpaceGenerator.SpaceSettings()
+                    {
+                        MinPlanetCount = 20,
+                        MaxPlanetCount = 50,
+                    });
+            }
         }
     }
 }
