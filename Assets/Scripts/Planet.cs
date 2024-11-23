@@ -2,7 +2,7 @@ using UnityEngine;
 using SpaceStand.Planets.Attributes;
 using Random = UnityEngine.Random;
 using SpaceStand.Attributes;
-using System.IO;
+using Newtonsoft.Json;
 
 public class Planet : SpaceObject
 {
@@ -12,8 +12,8 @@ public class Planet : SpaceObject
     public Planet(Vector2 position, SpaceObjectVisual visual) : base(position, visual)
     {
         attributes = new PlanetAttributes();
-        attributes.GetAttributesAsJson();
-        //Debug.Log(PLANET_DATA_DIRECTIORY);
+        JSonData = JsonConvert.SerializeObject(attributes);
+        Debug.Log(JSonData);
         //File.WriteAllText()
     }
 
