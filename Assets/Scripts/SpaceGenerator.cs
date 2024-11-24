@@ -89,7 +89,7 @@ public static class SpaceGenerator
 
         public SpaceSettings()
         {
-            Seed = 0; // RandomGenerator.RandomSeed();
+            Seed = RandomGenerator.RandomSeed();
         }
     }
 
@@ -97,7 +97,6 @@ public static class SpaceGenerator
     {
         return new SpaceSettings()
         {
-            Seed = 0,
             SpaceSize = 5000,
             MinPlanetCount = 50,
             MaxPlanetCount = 100,
@@ -262,6 +261,15 @@ public static class SpaceGenerator
 
         var rotateBehaviour = planetGameObject.GetComponent<RotateBehaviour>();
 
+
+        //float angle1 = Radian();
+        //float angle2 = Radian();
+
+        //x = Mathf.Sin(angle1) * Mathf.Cos(angle2);
+        //y = Mathf.Sin(angle1) * Mathf.Sin(angle2);
+        //z = Mathf.Cos(angle1);
+
+
         var axisAngle = random.Value(0, Mathf.PI * 2f);
 
         rotateBehaviour.Axis = new Vector3(Mathf.Sin(axisAngle), Mathf.Cos(axisAngle), 0f);
@@ -326,7 +334,7 @@ public static class SpaceGenerator
         {
             random.Push();
 
-            GenerateMoon(
+            GenerateAsteroid(
                 new MoonSettings
                 {
                     Parent = parent,
@@ -344,7 +352,24 @@ public static class SpaceGenerator
         }
     }
 
-    public static void GenerateMoon(MoonSettings settings, GameObject prefab, SpaceManager spaceManager, RandomGenerator random)
+    public static void GenerateAsteroid(MoonSettings settings, GameObject prefab, SpaceManager spaceManager, RandomGenerator random)
+    {
+        var planetGameObject = GenerateMoon(settings, prefab, spaceManager, random);
+
+        var parentRotateBehaviour = settings.Parent.GetComponent<RotateBehaviour>();
+
+        var rotateBehaviour = planetGameObject.GetComponent<RotateBehaviour>();
+
+        rotateBehaviour.enabled = true;
+
+        var axisAngle = random.Value(0, Mathf.PI * 2f);
+
+        rotateBehaviour.Point = parentRotateBehaviour.Point;
+        rotateBehaviour.Axis = new Vector3(Mathf.Sin(axisAngle), Mathf.Cos(axisAngle), 0f);
+        rotateBehaviour.Speed = settings.RotateSpeed;
+    }
+
+    public static GameObject GenerateMoon(MoonSettings settings, GameObject prefab, SpaceManager spaceManager, RandomGenerator random)
     {
         var parentRotateBehaviour = settings.Parent.GetComponent<RotateBehaviour>();
 
@@ -380,6 +405,8 @@ public static class SpaceGenerator
         var rotateBehaviour = planetGameObject.GetComponent<RotateBehaviour>();
 
         rotateBehaviour.enabled = false;
+
+        return planetGameObject;
     }
 
     private static void AssignMaterialColor(IcosahedronSettings settings, GameObject gameObject, RandomGenerator random)

@@ -14,7 +14,10 @@ public class RootBehaviour : ObjectBehaviour
     {
         if (Game.SpaceManager == null)
         {
-            Game.SpaceManager = SpaceGenerator.Generate(SpaceGenerator.DefaultSpaceSettings());
+            var settings = SpaceGenerator.DefaultSpaceSettings();
+            settings.Seed = 0;
+
+            Game.SpaceManager = SpaceGenerator.Generate(settings);
         }
     }
 

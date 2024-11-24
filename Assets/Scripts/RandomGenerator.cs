@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 public class RandomGenerator
 {
-    private static Random _seedGenerator = new Random();
+    private static System.Random _seedGenerator = new System.Random();
 
     private int _seedOffset = 1;
     private int _entriesIndex = 0;
@@ -15,7 +16,7 @@ public class RandomGenerator
     private class Entry
     {
         internal int _seed;
-        internal Random _random;
+        internal System.Random _random;
     }
 
     public RandomGenerator()
@@ -49,7 +50,7 @@ public class RandomGenerator
     public int ReSeed(int seed)
     {
         _entries[_entriesIndex]._seed = seed;
-        _entries[_entriesIndex]._random = new Random(_entries[_entriesIndex]._seed);
+        _entries[_entriesIndex]._random = new System.Random(_entries[_entriesIndex]._seed);
         return _entries[_entriesIndex]._seed;
     }
 
@@ -143,5 +144,55 @@ public class RandomGenerator
     public bool Bool()
     {
         return Value(0, 2) == 0;
+    }
+
+    public float Radian()
+    {
+        return Radian(MinRadians, MaxRadians);
+    }
+
+    public float Radian(float max)
+    {
+        return Radian(MinRadians, max);
+    }
+
+    public float Radian(float min, float max)
+    {
+        return (float)(min + _entries[_entriesIndex]._random.NextDouble() * (max - min));
+    }
+
+    private static readonly float MinRadians = 0;
+    private static readonly float MaxRadians = 6.283185307179586f;
+
+    public void UnitCircleVector(out float x, out float y)
+    {
+        float angle = Radian();
+
+        x = Mathf.Cos(angle);
+        y = Mathf.Sin(angle);
+    }
+
+    public Vector2 UnitCircleVector()
+    {
+        UnitCircleVector(out float x, out float y);
+
+        return new Vector2(x, y);
+    }
+
+    public void UnitSphereVector(out float x, out float y, out float z)
+    {
+        float angle1 = Radian();
+        float angle2 = Radian();
+
+        x = Mathf.Sin(angle1) * Mathf.Cos(angle2);
+        y = Mathf.Sin(angle1) * Mathf.Sin(angle2);
+        z = Mathf.Cos(angle1);
+    }
+
+    public Vector3 UnitSphereVector()
+    {
+        UnitSphereVector(out float x, out float y, out float z);
+
+        return new Vector3(x, y, z);
     }
 }
