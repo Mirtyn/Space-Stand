@@ -214,7 +214,8 @@ public class PlayerController : ObjectBehaviour
         pointerMoveDelta += Time.deltaTime * pointerMoveDeltaSpeed;
 
         pointerMoveDelta = Mathf.Clamp01(pointerMoveDelta);
-        pointer.position = Vector2.LerpUnclamped(pointerStartPosition, pointerTargetPosition, pointerMoveCurve.Evaluate(pointerMoveDelta));
+        var p = Vector2.LerpUnclamped(pointerStartPosition, pointerTargetPosition, pointerMoveCurve.Evaluate(pointerMoveDelta));
+        pointer.position = new Vector3(p.x, p.y, pointer.position.z);
     }
 
     private void ScalePointer()
