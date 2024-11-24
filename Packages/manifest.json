@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.silicon-heart.line-renderer-2d": "https://github.com/QThund/LineRenderer2D.git?path=/Assets",
     "com.unity.collab-proxy": "2.5.2",
     "com.unity.feature.2d": "2.0.1",
     "com.unity.ide.rider": "3.0.31",
