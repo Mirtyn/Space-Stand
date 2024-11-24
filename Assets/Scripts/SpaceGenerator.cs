@@ -1,4 +1,5 @@
 using NUnit.Framework.Internal;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Xml.Linq;
@@ -14,6 +15,7 @@ public static class SpaceGenerator
     private static string _asteroidRootPrefabName = "AsteroidRootPrefab";
     private static string _gridCrossHairPrefabName = "GridCrossHairPrefab";
     private static string _starPrefabName = "StarPrefab";
+    private static string _spaceBackgroundGameObjectName = "SpaceBackground";
     private static IcosahedronGenerator _icosahedronGenerator = new IcosahedronGenerator();
     
     private static float[] _planetHues = new[]
@@ -161,7 +163,15 @@ public static class SpaceGenerator
             spaceManager,
             random);
 
+        ScaleBackground(root, settings);
+
         return spaceManager;
+    }
+
+    private static void ScaleBackground(GameObject root, SpaceSettings settings)
+    {
+        var background = GameObject.Find(_spaceBackgroundGameObjectName);
+        background.transform.localScale = new Vector3(settings.SpaceSize, settings.SpaceSize, 1);
     }
 
     private static void GenerateStars(GameObject parent, SpaceSettings settings, SpaceManager spaceManager, RandomGenerator random)
