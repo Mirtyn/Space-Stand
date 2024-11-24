@@ -24,7 +24,7 @@ public abstract class SpaceObject
         this.visual = visual;
     }
 
-    public void Clicked()
+    public void Clicked(SpaceObjectClickEvent e)
     {
         //JsonConvert.
         SpaceObjectInspector.Instance.SetSpaceObject(name, description);

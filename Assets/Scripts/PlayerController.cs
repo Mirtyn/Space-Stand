@@ -188,7 +188,14 @@ public class PlayerController : ObjectBehaviour
             {
                 if (collider.gameObject.TryGetComponent<SpaceObjectVisual>(out SpaceObjectVisual visual))
                 {
-                    visual.OnClick();
+                    var e = new SpaceObjectClickEvent
+                    {
+                        ClickedGameObject = collider.gameObject,
+                        MouseScreenPosition = mouseScreenPos,
+                        MouseWorldPosition = mouseWorldPos,
+                    };
+
+                    visual.OnClick(e);
                 }
             }
 
