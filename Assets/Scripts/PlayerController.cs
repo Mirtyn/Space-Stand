@@ -143,6 +143,7 @@ public class PlayerController : ObjectBehaviour
     private void CheckCameraWithinBoundsOfWorld()
     {
         int spaceSize = GameManager.Instance.SpaceManager.Space.Size / 2;
+        //int spaceSize = Game.SpaceManager.Space.Size / 2;
 
         Vector3 cameraPos = mainCamera.transform.position;
 
@@ -191,7 +192,14 @@ public class PlayerController : ObjectBehaviour
             {
                 if (collider.gameObject.TryGetComponent<SpaceObjectVisual>(out SpaceObjectVisual visual))
                 {
-                    visual.OnClick();
+                    var e = new SpaceObjectClickEvent
+                    {
+                        ClickedGameObject = collider.gameObject,
+                        MouseScreenPosition = mouseScreenPos,
+                        MouseWorldPosition = mouseWorldPos,
+                    };
+
+                    visual.OnClick(e);
                 }
             }
 
@@ -217,7 +225,8 @@ public class PlayerController : ObjectBehaviour
         pointerMoveDelta += Time.deltaTime * pointerMoveDeltaSpeed;
 
         pointerMoveDelta = Mathf.Clamp01(pointerMoveDelta);
-        pointer.position = Vector2.LerpUnclamped(pointerStartPosition, pointerTargetPosition, pointerMoveCurve.Evaluate(pointerMoveDelta));
+        var p = Vector2.LerpUnclamped(pointerStartPosition, pointerTargetPosition, pointerMoveCurve.Evaluate(pointerMoveDelta));
+        pointer.position = new Vector3(p.x, p.y, pointer.position.z);
     }
 
     private void ScalePointer()

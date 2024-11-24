@@ -6,6 +6,10 @@ using UnityEngine;
 
 public abstract class SpaceObject
 {
+    private static int _IdRoot = 1;
+
+    public int Id { get; set; }
+
     public Vector2 position;
     public SpaceObjectVisual visual;
     protected string JSonData;
@@ -16,15 +20,17 @@ public abstract class SpaceObject
 
     public SpaceObject()
     {
+        Id = _IdRoot++;
     }
 
     public SpaceObject(Vector2 position, SpaceObjectVisual visual)
+        : this()
     {
         this.position = position;
         this.visual = visual;
     }
 
-    public void Clicked()
+    public virtual void Clicked(SpaceObjectClickEvent e)
     {
         //JsonConvert.
         SpaceObjectInspector.Instance.SetSpaceObject(name, description);
