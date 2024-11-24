@@ -36,16 +36,11 @@ public class PlanetAttributes : ISpaceObjectAttributes
     public ClimateType Climate;
     public CoreSoilType CoreSoil;
     public SurfaceSoilType SurfaceSoil;
-    //public MineralsType Minerals;
     public ResourceType[] PlanetResources;
     public VegitaitionType Vegitation;
 
     public PlanetAttributes()
     {
-        //PlanetGenerationSettingsSO planetGenerationSettings = PlanetGenerationSettingsSO.Instance.PlanetGenerationSettings;
-        int nameStartLength = PlanetGenerationSettingsSO.PlanetNameStart.Length;
-        int nameEndLength = PlanetGenerationSettingsSO.PlanetNameEnd.Length;
-
         Name = SpaceGenerator.GeneratePlanetName(new RandomGenerator());
 
         Temperature = Random.Range(PlanetGenerationSettingsSO.MinTemperature, PlanetGenerationSettingsSO.MaxTemperature + 1);
@@ -126,16 +121,6 @@ public class PlanetAttributes : ISpaceObjectAttributes
 
         CoreSoil = coreSoilTypes[Random.Range(0, length)];
 
-        //r = type switch
-        //{
-        //    PlanetType.EarthLike => (byte)(CoreSoilType.MoltenStone | CoreSoilType.Stone),
-        //    PlanetType.Gas => (byte)(CoreSoilType.None),
-        //    PlanetType.Lava => (byte)(CoreSoilType.MoltenStone | CoreSoilType.Stone),
-        //    PlanetType.Ocean => (byte)(CoreSoilType.Stone),
-        //    PlanetType.Terrestrial => (byte)(CoreSoilType.MoltenStone | CoreSoilType.Stone),
-        //};
-        //coreSoil = (CoreSoilType)GetRandomEnumValue(r);
-
         var surfaceSoilTypes = Type.GetAttribute<SurfaceSoilTypeAttribute>().SoilTypes;
         length = surfaceSoilTypes.Length;
 
@@ -145,7 +130,6 @@ public class PlanetAttributes : ISpaceObjectAttributes
         var resourceTypes = Type.GetAttribute<ResourceAttribute>().ResourceTypes.ToList();
         var count = resourceTypes.Count;
 
-        //Minerals = mineralsTypes[Random.Range(0, length)];
         int numResources;
         if (CoreSoil == CoreSoilType.MoltenStone)
         {
@@ -190,25 +174,6 @@ public class PlanetAttributes : ISpaceObjectAttributes
             //$"Resource density: {Minerals}\n" +
             $"Vegitation: {Vegitation}";
     }
-
-    /*
-    public int GetRandomEnumValue(byte value)
-    {
-        List<int> values = new List<int>();
-        for (int i = 0; i < 8; i++)
-        {
-            if ((value & (1 << i)) != 0)
-            {
-                values.Add(i);
-
-
-            }
-        }
-
-        int randomValue = values[(Random.Range(0, values.Count))];
-        return randomValue;
-    }
-    */
 
     public string GetName()
     {
