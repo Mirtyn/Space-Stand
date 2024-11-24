@@ -6,7 +6,7 @@ public class UIPanelManager : ObjectBehaviour
 
     private void Awake()
     {
-        Game.UIPanelManager = this;
+        //Game.UIPanelManager = this;
     }
 
     public bool CheckForPanelsOnScreenPos(Vector2 screenPosition)

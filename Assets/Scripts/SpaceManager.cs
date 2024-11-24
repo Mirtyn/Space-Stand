@@ -8,7 +8,7 @@ public class SpaceManager
 
     private const string _rootGameObjectName = "Root";
 
-    public void Destroy()
+    public void DestroyRootChildren()
     {
         var root = GameObject.Find(_rootGameObjectName);
 

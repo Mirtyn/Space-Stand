@@ -1,38 +1,34 @@
 using UnityEngine;
 
-public class RootBehaviour : ObjectBehaviour
+public class GameManagerBehaviour : ObjectBehaviour
 {
     private const int TargetFrameRate = 60;
 
     void Awake()
     {
         QualitySettings.vSyncCount = 0;
+
         Application.targetFrameRate = TargetFrameRate;
 
-        if (Game.SpaceManager == null)
-        {
-            var settings = new SpaceGenerator.SpaceSettings();
+        Game.Initialize();
 
-            //settings.MinPlanetCount = settings.MaxPlanetCount = 1;
-            //settings.SpaceSize = 1;
-            settings.Seed = 1024;
-
-            Game.SpaceManager = SpaceGenerator.Generate(settings);
-        }
+        Debug.Log($"Screen resolution: {Screen.width}x${Screen.height}");
     }
 
-    private void Start()
+    void Start()
     {
-        Debug.Log($"{Screen.width} / ${Screen.height}");
+
     }
 
     void Update()
     {
+        Game.Update();
+
         if (Input.GetKeyDown(KeyCode.F5))
         {
             if (Game.SpaceManager != null)
             {
-                Game.SpaceManager.Destroy();
+                Game.SpaceManager.DestroyRootChildren();
 
                 var settings = new SpaceGenerator.SpaceSettings();
 

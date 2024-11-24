@@ -3,11 +3,8 @@ using UnityEngine;
 [RequireComponent(typeof(Camera))]
 public class PlayerController : ObjectBehaviour
 {
-    private Camera mainCamera;
-    private PlayerInputs input;
     [SerializeField] private float scrollSensitivity = 60f;
     [SerializeField] private float zoomSpeed = 5f;
-    //[SerializeField] private float moveSpeed = 5f;
 
     [SerializeField] private int[] zoomSteps = new int[] { 50, 250, 500, 750, 1000 };
     [SerializeField] private float minDifferencReqForNextStep = 30f;
@@ -46,17 +43,8 @@ public class PlayerController : ObjectBehaviour
 
     private Vector2 prevFrameMouseScreenPos;
 
-    private void Awake()
-    {
-        mainCamera = GetComponent<Camera>();
-    }
-
     private void Update()
     {
-        input = GetPlayerInput();
-
-        //Game.UIPanelManager.CheckForPanelsOnScreenPos(Input.mousePosition);
-
         HandleCameraScroll();
         HandleCameraMovement();
 
@@ -66,12 +54,7 @@ public class PlayerController : ObjectBehaviour
 
     private void HandleCameraScroll()
     {
-        var p = mainCamera.transform.position;
-
-        //p.z += -input.MouseScrollDelta * Time.deltaTime * scrollSensitivity;
-
-        //Debug.Log($"scroll: {-input.MouseScrollDelta} DeltaTime: {Time.deltaTime} sensitivity: {scrollSensitivity} result: {-input.MouseScrollDelta * Time.deltaTime * scrollSensitivity}");
-        targetZoomLevel += -input.MouseScrollDelta * scrollSensitivity;
+        targetZoomLevel += -Game.PlayerInput.MouseScrollDelta * scrollSensitivity;
 
         if (targetZoomLevel > (zoomSteps[targetZoomStep] + minDifferencReqForNextStep))
         {
@@ -108,31 +91,31 @@ public class PlayerController : ObjectBehaviour
         //targetZoomLevel = Mathf.Lerp(targetZoomLevel, zoomSteps[targetZoomStep], Time.deltaTime * (zoomSpeed / 25));
 
         Vector2 currentMouseScreenPos = Input.mousePosition;
-        Vector3 currentMouseWorldPos = mainCamera.ScreenToWorldPoint(currentMouseScreenPos);
-        Vector3 centerScreenWorldPos = mainCamera.ScreenToWorldPoint(new Vector2(Screen.width / 2, Screen.height / 2));
+        Vector3 currentMouseWorldPos = Game.MainCamera.ScreenToWorldPoint(currentMouseScreenPos);
+        Vector3 centerScreenWorldPos = Game.MainCamera.ScreenToWorldPoint(new Vector2(Screen.width / 2, Screen.height / 2));
 
         Vector3 difference = centerScreenWorldPos - currentMouseWorldPos;
 
-        float prevSize = mainCamera.orthographicSize;
+        float prevSize = Game.MainCamera.orthographicSize;
 
-        mainCamera.orthographicSize = Mathf.Round(Mathf.Lerp(mainCamera.orthographicSize, targetZoomLevel, Time.deltaTime * zoomSpeed));
+        Game.MainCamera.orthographicSize = Mathf.Round(Mathf.Lerp(Game.MainCamera.orthographicSize, targetZoomLevel, Time.deltaTime * zoomSpeed));
 
-        difference *= (mainCamera.orthographicSize / prevSize) - 1;
-        mainCamera.transform.position += difference;
+        difference *= (Game.MainCamera.orthographicSize / prevSize) - 1;
+        Game.MainCamera.transform.position += difference;
 
         //mainCamera.orthographicSize = targetZoomLevel;
     }
 
     private void HandleCameraMovement()
     {
-        if (input.Mouse1Or2Pressed)
+        if (Game.PlayerInput.Mouse1Or2Pressed)
         {
             Vector2 currentMouseScreenPos = Input.mousePosition;
-            Vector3 prevFrameMouseWorldPos = mainCamera.ScreenToWorldPoint(prevFrameMouseScreenPos);
-            Vector3 currentMouseWorldPos = mainCamera.ScreenToWorldPoint(currentMouseScreenPos);
+            Vector3 prevFrameMouseWorldPos = Game.MainCamera.ScreenToWorldPoint(prevFrameMouseScreenPos);
+            Vector3 currentMouseWorldPos = Game.MainCamera.ScreenToWorldPoint(currentMouseScreenPos);
 
             Vector3 difference = prevFrameMouseWorldPos - currentMouseWorldPos;
-            mainCamera.transform.position += difference;
+            Game.MainCamera.transform.position += difference;
         }
 
         prevFrameMouseScreenPos = Input.mousePosition;
@@ -145,7 +128,7 @@ public class PlayerController : ObjectBehaviour
         int spaceSize = GameManager.Instance.SpaceManager.Space.Size / 2;
         //int spaceSize = Game.SpaceManager.Space.Size / 2;
 
-        Vector3 cameraPos = mainCamera.transform.position;
+        Vector3 cameraPos = Game.MainCamera.transform.position;
 
         if (cameraPos.x > spaceSize)
         {
@@ -165,13 +148,13 @@ public class PlayerController : ObjectBehaviour
             cameraPos.y = -spaceSize;
         }
 
-        mainCamera.transform.position = cameraPos;
+        Game.MainCamera.transform.position = cameraPos;
     }
 
     private void HandleMouseHover()
     {
         Vector2 mouseScreenPos = Input.mousePosition;
-        Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(mouseScreenPos);
+        Vector3 mouseWorldPos = Game.MainCamera.ScreenToWorldPoint(mouseScreenPos);
         mouseWorldPos.z = 0;
 
         var collider = Physics2D.OverlapPoint(mouseWorldPos);
@@ -188,7 +171,7 @@ public class PlayerController : ObjectBehaviour
                 pointerTargetScale = (collider as CircleCollider2D).radius;
             }
 
-            if (input.Mouse0Down)
+            if (Game.PlayerInput.Mouse0Down)
             {
                 if (collider.gameObject.TryGetComponent<SpaceObjectVisual>(out SpaceObjectVisual visual))
                 {
@@ -205,7 +188,7 @@ public class PlayerController : ObjectBehaviour
 
             return;
         }
-        else if (input.Mouse0Down)
+        else if (Game.PlayerInput.Mouse0Down)
         {
             SpaceObjectInspector.Instance.InView = false;
         }
@@ -249,47 +232,4 @@ public class PlayerController : ObjectBehaviour
             pointer.gameObject.SetActive(true);
         }
     }
-
-    private PlayerInputs GetPlayerInput()
-    {
-        PlayerInputs input = new PlayerInputs();
-
-        input.MouseScrollDelta = Input.mouseScrollDelta.y;
-
-        input.Mouse0Down = Input.GetMouseButtonDown(0);
-
-        input.Mouse1Or2Pressed = Input.GetMouseButton(1) || Input.GetMouseButton(2);
-        //input.Mouse1Or2Up = Input.GetMouseButtonUp(1) || Input.GetMouseButtonUp(2);
-
-        if (Input.GetKey(KeyCode.W))
-        {
-            input.MoveInput.y++;
-        }
-
-        if (Input.GetKey(KeyCode.S))
-        {
-            input.MoveInput.y--;
-        }
-
-        if (Input.GetKey(KeyCode.D))
-        {
-            input.MoveInput.x++;
-        }
-
-        if (Input.GetKey(KeyCode.A))
-        {
-            input.MoveInput.x--;
-        }
-
-        return input;
-    }
-}
-
-
-public struct PlayerInputs
-{
-    public float MouseScrollDelta;
-    public bool Mouse0Down;
-    public bool Mouse1Or2Pressed;
-    public Vector2 MoveInput;
 }
