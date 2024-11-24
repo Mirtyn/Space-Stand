@@ -90,7 +90,7 @@ public class PlayerController : ObjectBehaviour
             targetZoomLevel = zoomSteps[0] - maxDistanceFromEndSteps;
         }
 
-        targetZoomLevel = Mathf.Lerp(targetZoomLevel, zoomSteps[targetZoomStep], Time.deltaTime * (zoomSpeed / 25));
+        //targetZoomLevel = Mathf.Lerp(targetZoomLevel, zoomSteps[targetZoomStep], Time.deltaTime * (zoomSpeed / 25));
 
         Vector2 currentMouseScreenPos = Input.mousePosition;
         Vector3 currentMouseWorldPos = mainCamera.ScreenToWorldPoint(currentMouseScreenPos);
@@ -121,6 +121,35 @@ public class PlayerController : ObjectBehaviour
         }
 
         prevFrameMouseScreenPos = Input.mousePosition;
+
+        CheckCameraWithinBoundsOfWorld();
+    }
+
+    private void CheckCameraWithinBoundsOfWorld()
+    {
+        int spaceSize = GameManager.Instance.SpaceManager.Space.Size / 2;
+
+        Vector3 cameraPos = mainCamera.transform.position;
+
+        if (cameraPos.x > spaceSize)
+        {
+            cameraPos.x = spaceSize;
+        }
+        else if (cameraPos.x < -spaceSize)
+        {
+            cameraPos.x = -spaceSize;
+        }
+
+        if (cameraPos.y > spaceSize)
+        {
+            cameraPos.y = spaceSize;
+        }
+        else if (cameraPos.y < -spaceSize)
+        {
+            cameraPos.y = -spaceSize;
+        }
+
+        mainCamera.transform.position = cameraPos;
     }
 
     private void HandleMouseHover()
