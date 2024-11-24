@@ -7,4 +7,6 @@ public class GameManager
     public static GameManager Instance { get { return _instance; } }
 
     public SpaceManager SpaceManager { get; set; }
+
+    public UIPanelManager UIPanelManager { get; set; }
 }

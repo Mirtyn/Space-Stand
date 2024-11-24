@@ -55,6 +55,8 @@ public class PlayerController : ObjectBehaviour
     {
         input = GetPlayerInput();
 
+        //Game.UIPanelManager.CheckForPanelsOnScreenPos(Input.mousePosition);
+
         HandleCameraScroll();
         HandleCameraMovement();
 
@@ -172,6 +174,7 @@ public class PlayerController : ObjectBehaviour
         mouseWorldPos.z = 0;
 
         var collider = Physics2D.OverlapPoint(mouseWorldPos);
+
 
         if (collider != null)
         {
