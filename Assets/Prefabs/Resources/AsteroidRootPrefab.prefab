@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1328089375515915770}
   - component: {fileID: 4108061221199767643}
   - component: {fileID: -3415003942997610880}
-  - component: {fileID: 6216613628316013757}
+  - component: {fileID: 5648018703167383781}
   m_Layer: 0
   m_Name: AsteroidRootPrefab
   m_TagString: Untagged
@@ -100,7 +100,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06455fc69eddf4f46a2f59a3c8469594, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &6216613628316013757
+--- !u!114 &5648018703167383781
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -109,6 +109,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 3771961192055281879}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26078e25fee403544abf1395cce38d59, type: 3}
+  m_Script: {fileID: 11500000, guid: 2c323b9efe25a7446bd60890b2d39733, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
