@@ -1,8 +1,10 @@
 using NUnit.Framework.Internal;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Xml.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public static class SpaceGenerator
 {
@@ -11,6 +13,7 @@ public static class SpaceGenerator
     private static string _moonRootPrefabName = "MoonRootPrefab";
     private static string _asteroidRootPrefabName = "AsteroidRootPrefab";
     private static string _gridCrossHairPrefabName = "GridCrossHairPrefab";
+    private static string _starPrefabName = "StarPrefab";
     private static IcosahedronGenerator _icosahedronGenerator = new IcosahedronGenerator();
     
     private static float[] _planetHues = new[]
@@ -56,6 +59,15 @@ public static class SpaceGenerator
         //Color32From(0xFFA0FB),
     };
 
+    private static Color32[] _starColors = new[]
+    {
+        new Color32(251, 214, 222, 255),
+        new Color32(254, 222, 191, 255),
+        new Color32(236, 199, 185, 255),
+        new Color32(185, 236, 232, 255),
+        new Color32(217, 185, 236, 255),
+    };
+
     private static Color32[] _moonColors = new[]
     {
         new Color32(251, 214, 222, 255),
@@ -86,6 +98,8 @@ public static class SpaceGenerator
         public float MaxPlanetRotateSpeed { get; set; } = 24f;
 
         public int GridStepSize { get; set; } = 250;
+
+        public int StarCount { get; set; } = 4000;
 
         public SpaceSettings()
         {
@@ -141,10 +155,49 @@ public static class SpaceGenerator
             spaceManager, 
             random);
 
+        GenerateStars(
+            root,
+            settings,
+            spaceManager,
+            random);
+
         return spaceManager;
     }
 
-    public static void GenerateGrid(GameObject parent, SpaceSettings settings, SpaceManager spaceManager, RandomGenerator random)
+    private static void GenerateStars(GameObject parent, SpaceSettings settings, SpaceManager spaceManager, RandomGenerator random)
+    {
+        var _starPrefab = Resources.Load<GameObject>(_starPrefabName);
+
+        for (var j = 0; j < settings.StarCount; j++)
+        {
+            var position = new Vector3(
+                random.Value(spaceManager.Space.Size * -0.5f, random.Value(spaceManager.Space.Size * 0.5f)),
+                random.Value(spaceManager.Space.Size * -0.5f, random.Value(spaceManager.Space.Size * 0.5f)),
+                0f);
+
+            var starGameObject = UnityEngine.Object.Instantiate(_starPrefab, position, Quaternion.identity);
+
+            var index = random.Int(0, starGameObject.transform.childCount);
+
+            var child = starGameObject.transform.GetChild(index);
+            
+            child.gameObject.SetActive(true);
+
+            var material = new Material(child.GetComponent<LineRenderer>().material);
+
+            var color = _starColors[random.Value(0, _starColors.Length)];
+
+            color.a = random.Byte(10, 128);
+
+            material.SetColor("_BaseColor", color);
+
+            child.GetComponent<LineRenderer>().material = material;
+
+            starGameObject.transform.SetParent(parent.transform, false);
+        }
+    }
+
+    private static void GenerateGrid(GameObject parent, SpaceSettings settings, SpaceManager spaceManager, RandomGenerator random)
     {
         var _gridCrossHairPrefab = Resources.Load<GameObject>(_gridCrossHairPrefabName);
 
@@ -168,7 +221,7 @@ public static class SpaceGenerator
         }
     }
 
-    public static void GeneratePlanets(int count, GameObject parent, SpaceSettings settings, SpaceManager spaceManager, RandomGenerator random)
+    private static void GeneratePlanets(int count, GameObject parent, SpaceSettings settings, SpaceManager spaceManager, RandomGenerator random)
     {
         var _planetRootPrefab = Resources.Load<GameObject>(_planetRootPrefabName);
 
@@ -211,7 +264,7 @@ public static class SpaceGenerator
             PlanetGenerationSettingsSO.PlanetNameEnd[random.Int(0, nameEndLength)];
     }
 
-    public static void GeneratePlanet(PlanetSettings settings, GameObject prefab, SpaceManager spaceManager, RandomGenerator random)
+    private static void GeneratePlanet(PlanetSettings settings, GameObject prefab, SpaceManager spaceManager, RandomGenerator random)
     {
         var planetGameObject = UnityEngine.Object.Instantiate(prefab, settings.Position, Quaternion.identity);
 
@@ -270,7 +323,7 @@ public static class SpaceGenerator
         random.Pop();
     }
 
-    public static void GenerateMoons(
+    private static void GenerateMoons(
         GameObject parent, 
         Planet planet, 
         int count, 
@@ -300,7 +353,7 @@ public static class SpaceGenerator
         }
     }
 
-    public static void GenerateAsteroids(
+    private static void GenerateAsteroids(
         GameObject parent,
         Planet planet,
         int count,
@@ -330,7 +383,7 @@ public static class SpaceGenerator
         }
     }
 
-    public static void GenerateAsteroid(IcosahedronSettings settings, GameObject prefab, SpaceManager spaceManager, RandomGenerator random)
+    private static void GenerateAsteroid(IcosahedronSettings settings, GameObject prefab, SpaceManager spaceManager, RandomGenerator random)
     {
         var planetGameObject = GenerateIcosahedron(settings, prefab, spaceManager, random);
 
@@ -347,7 +400,7 @@ public static class SpaceGenerator
         rotateBehaviour.Speed = settings.RotateSpeed;
     }
 
-    public static GameObject GenerateIcosahedron(IcosahedronSettings settings, GameObject prefab, SpaceManager spaceManager, RandomGenerator random)
+    private static GameObject GenerateIcosahedron(IcosahedronSettings settings, GameObject prefab, SpaceManager spaceManager, RandomGenerator random)
     {
         var parentRotateBehaviour = settings.Parent.GetComponent<RotateBehaviour>();
 
