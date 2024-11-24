@@ -56,19 +56,19 @@ public class RandomGenerator
 
     public int Push()
     {
-        _entries.Add(new Entry());
-        _entriesIndex++;
-        ReSeed(_entries[0]._seed + _seedOffset++);
+        //_entries.Add(new Entry());
+        //_entriesIndex++;
+        //ReSeed(_entries[0]._seed + _seedOffset++);
         return Seed;
     }
 
     public void Pop()
     {
-        if(_entriesIndex > 0)
-        {
-            _entries.RemoveAt(_entriesIndex - 1);
-            _entriesIndex--;
-        }
+        //if(_entriesIndex > 0)
+        //{
+        //    _entries.RemoveAt(_entriesIndex - 1);
+        //    _entriesIndex--;
+        //}
     }
 
     public int Reset()

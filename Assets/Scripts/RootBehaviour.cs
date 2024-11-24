@@ -14,7 +14,10 @@ public class RootBehaviour : ObjectBehaviour
     {
         if (Game.SpaceManager == null)
         {
-            var settings = SpaceGenerator.DefaultSpaceSettings();
+            var settings = new SpaceGenerator.SpaceSettings();
+
+            //settings.MinPlanetCount = settings.MaxPlanetCount = 1;
+            //settings.SpaceSize = 1;
             settings.Seed = 0;
 
             Game.SpaceManager = SpaceGenerator.Generate(settings);
@@ -23,13 +26,18 @@ public class RootBehaviour : ObjectBehaviour
 
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.F5)) 
+        if (Input.GetKeyDown(KeyCode.F5))
         {
             if (Game.SpaceManager != null)
             {
                 Game.SpaceManager.Destroy();
 
-                Game.SpaceManager = SpaceGenerator.Generate(SpaceGenerator.DefaultSpaceSettings());
+                var settings = new SpaceGenerator.SpaceSettings();
+
+                //settings.MinPlanetCount = settings.MaxPlanetCount = 1;
+                //settings.SpaceSize = 1;
+
+                Game.SpaceManager = SpaceGenerator.Generate(settings);
             }
         }
     }

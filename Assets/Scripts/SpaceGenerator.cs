@@ -77,13 +77,13 @@ public static class SpaceGenerator
     public class SpaceSettings
     {
         public int Seed { get; set; }
-        public int MinPlanetCount { get; set; } = 1;
-        public int MaxPlanetCount { get; set; } = 1;
-        public float MinPlanetRadius { get; set; } = 4;
+        public int MinPlanetCount { get; set; } = 50;
+        public int MaxPlanetCount { get; set; } = 100;
+        public float MinPlanetRadius { get; set; } = 2;
         public float MaxPlanetRadius { get; set; } = 32;
         public int SpaceSize { get; set; } = 4000;
         public float MinPlanetRotateSpeed { get; set; } = 2f;
-        public float MaxPlanetRotateSpeed { get; set; } = 12f;
+        public float MaxPlanetRotateSpeed { get; set; } = 24f;
 
         public int GridStepSize { get; set; } = 250;
 
@@ -93,20 +93,6 @@ public static class SpaceGenerator
         }
     }
 
-    public static SpaceSettings DefaultSpaceSettings()
-    {
-        return new SpaceSettings()
-        {
-            SpaceSize = 5000,
-            MinPlanetCount = 50,
-            MaxPlanetCount = 100,
-            MinPlanetRadius = 4f,
-            MaxPlanetRadius = 32f,
-            MinPlanetRotateSpeed = 2f,
-            MaxPlanetRotateSpeed = 12f,
-        };
-    }
-
     public class IcosahedronSettings
     {
         public GameObject Parent { get; set; }
@@ -114,6 +100,7 @@ public static class SpaceGenerator
         public float RadiusOffset { get; set; } = 0.1f; // 10%
         public int SubdivideSteps { get; set; }
         public float RotateSpeed { get; set; }
+        public float Offset { get; set; }
 
         public Color32[] Colors { get; set; }
     }
@@ -121,15 +108,6 @@ public static class SpaceGenerator
     public class PlanetSettings : IcosahedronSettings
     {
         public Vector3 Position { get; set; }
-    }
-
-    public class MoonSettings : IcosahedronSettings
-    {
-        public float Offset { get; set; }
-    }
-
-    public class AsteroidSettings : MoonSettings
-    {
     }
 
     public class Result
@@ -304,8 +282,8 @@ public static class SpaceGenerator
         {
             random.Push();
 
-            GenerateMoon(
-                new MoonSettings
+            GenerateIcosahedron(
+                new IcosahedronSettings
                 {
                     Parent = parent,
                     Offset =  random.Value(planet.Radius * 2.25f, planet.Radius * 3.75f),
@@ -335,7 +313,7 @@ public static class SpaceGenerator
             random.Push();
 
             GenerateAsteroid(
-                new MoonSettings
+                new IcosahedronSettings
                 {
                     Parent = parent,
                     Offset = random.Value(planet.Radius * 1.15f, planet.Radius * 1.75f),
@@ -352,9 +330,9 @@ public static class SpaceGenerator
         }
     }
 
-    public static void GenerateAsteroid(MoonSettings settings, GameObject prefab, SpaceManager spaceManager, RandomGenerator random)
+    public static void GenerateAsteroid(IcosahedronSettings settings, GameObject prefab, SpaceManager spaceManager, RandomGenerator random)
     {
-        var planetGameObject = GenerateMoon(settings, prefab, spaceManager, random);
+        var planetGameObject = GenerateIcosahedron(settings, prefab, spaceManager, random);
 
         var parentRotateBehaviour = settings.Parent.GetComponent<RotateBehaviour>();
 
@@ -369,7 +347,7 @@ public static class SpaceGenerator
         rotateBehaviour.Speed = settings.RotateSpeed;
     }
 
-    public static GameObject GenerateMoon(MoonSettings settings, GameObject prefab, SpaceManager spaceManager, RandomGenerator random)
+    public static GameObject GenerateIcosahedron(IcosahedronSettings settings, GameObject prefab, SpaceManager spaceManager, RandomGenerator random)
     {
         var parentRotateBehaviour = settings.Parent.GetComponent<RotateBehaviour>();
 
