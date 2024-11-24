@@ -11,6 +11,21 @@ public class Planet : SpaceObject
     public float Radius { get; set; }
     public string Name { get { return ((PlanetAttributes)attributes).Name; } set { ((PlanetAttributes)attributes).Name = value; } }
 
+    private bool _isSelected = false;
+
+    public bool IsSelected 
+    { 
+        get 
+        { 
+            return _isSelected; 
+        } 
+        set 
+        { 
+            _isSelected = value;
+            TogglePlanetPointer();
+        } 
+    }
+
     public Planet(Vector2 position, SpaceObjectVisual visual) : base(position, visual)
     {
         attributes = new PlanetAttributes();
@@ -21,6 +36,21 @@ public class Planet : SpaceObject
     {
         attributes = new PlanetAttributes();
         attributes.GetAttributesAsJson();
+    }
+
+    private void TogglePlanetPointer()
+    {
+
+    }
+
+    public override void Clicked(SpaceObjectClickEvent e)
+    {
+        if(!IsSelected)
+        {
+            IsSelected = true;
+        }
+
+        base.Clicked(e);
     }
 }
 

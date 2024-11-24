@@ -8,17 +8,14 @@ public class RootBehaviour : ObjectBehaviour
     {
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = TargetFrameRate;
-    }
 
-    void Start()
-    {
         if (Game.SpaceManager == null)
         {
             var settings = new SpaceGenerator.SpaceSettings();
 
             //settings.MinPlanetCount = settings.MaxPlanetCount = 1;
             //settings.SpaceSize = 1;
-            settings.Seed = 0;
+            settings.Seed = 1024;
 
             Game.SpaceManager = SpaceGenerator.Generate(settings);
         }

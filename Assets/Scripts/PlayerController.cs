@@ -141,6 +141,7 @@ public class PlayerController : ObjectBehaviour
     private void CheckCameraWithinBoundsOfWorld()
     {
         int spaceSize = GameManager.Instance.SpaceManager.Space.Size / 2;
+        //int spaceSize = Game.SpaceManager.Space.Size / 2;
 
         Vector3 cameraPos = mainCamera.transform.position;
 
