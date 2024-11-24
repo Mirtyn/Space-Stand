@@ -21,13 +21,26 @@ public class PlayerController : ObjectBehaviour
 
     [SerializeField] private float pointerScaleDeltaSpeed = 1f;
     private float pointerScaleDelta = 0f;
-    private bool increaseScaleDelta = false;
 
     [SerializeField] private float pointerMoveDeltaSpeed = 1f;
     private float pointerMoveDelta = 0f;
-    private bool increaseMoveDelta = false;
 
-    private float pointerTargetScale = 1f;
+    private float _pointerTargetScale = 1f;
+    private float pointerTargetScale
+    {
+        get
+        {
+            return _pointerTargetScale;
+        }
+        set
+        {
+            if (value != _pointerTargetScale)
+            {
+                _pointerTargetScale = value;
+                pointerScaleDelta = 0f;
+            }
+        }
+    }
     private Vector3 pointerStartPosition;
     private Vector3 pointerTargetPosition;
 
@@ -165,30 +178,29 @@ public class PlayerController : ObjectBehaviour
             pointerStartPosition = pointer.position;
             pointerTargetPosition = collider.transform.position;
 
-            increaseMoveDelta = true;
-            increaseScaleDelta = true;
+            //increaseMoveDelta = true;
+            if (collider is CircleCollider2D)
+            {
+                pointerTargetScale = (collider as CircleCollider2D).radius;
+            }
 
             if (input.Mouse0Down)
             {
-                collider.gameObject.GetComponent<SpaceObjectVisual>().OnClick();
-
-
+                if (collider.gameObject.TryGetComponent<SpaceObjectVisual>(out SpaceObjectVisual visual))
+                {
+                    visual.OnClick();
+                }
             }
+
+            return;
         }
         else if (input.Mouse0Down)
         {
-            pointerMoveDelta = 0f;
-            increaseMoveDelta = false;
-            increaseScaleDelta = false;
-
             SpaceObjectInspector.Instance.InView = false;
         }
-        else
-        {
-            pointerMoveDelta = 0f;
-            increaseMoveDelta = false;
-            increaseScaleDelta = false;
-        }
+
+        pointerTargetScale = 0f;
+        pointerMoveDelta = 0f;
     }
 
     private void HandlePointer()
@@ -199,14 +211,7 @@ public class PlayerController : ObjectBehaviour
 
     private void MovePointer()
     {
-        if (increaseMoveDelta)
-        {
-            pointerMoveDelta += Time.deltaTime * pointerMoveDeltaSpeed;
-        }
-        else
-        {
-            pointerMoveDelta -= Time.deltaTime * pointerMoveDeltaSpeed;
-        }
+        pointerMoveDelta += Time.deltaTime * pointerMoveDeltaSpeed;
 
         pointerMoveDelta = Mathf.Clamp01(pointerMoveDelta);
         pointer.position = Vector2.LerpUnclamped(pointerStartPosition, pointerTargetPosition, pointerMoveCurve.Evaluate(pointerMoveDelta));
@@ -214,20 +219,23 @@ public class PlayerController : ObjectBehaviour
 
     private void ScalePointer()
     {
-        if (increaseScaleDelta)
-        {
-            pointerScaleDelta += Time.deltaTime * pointerScaleDeltaSpeed;
-        }
-        else
-        {
-            pointerScaleDelta -= Time.deltaTime * pointerScaleDeltaSpeed;
-        }
+        pointerScaleDelta += Time.deltaTime * pointerScaleDeltaSpeed;
 
         pointerScaleDelta = Mathf.Clamp01(pointerScaleDelta);
 
-        float f = Mathf.LerpUnclamped(0, pointerTargetScale, pointerScaleCurve.Evaluate(pointerScaleDelta));
+        float f = pointer.localScale.x;
+        f = Mathf.LerpUnclamped(f, pointerTargetScale, pointerScaleCurve.Evaluate(pointerScaleDelta));
         Vector3 v3 = new Vector3(f, f, f);
         pointer.localScale = v3;
+
+        if (Mathf.Round(f) == 0f)
+        {
+            pointer.gameObject.SetActive(false);
+        }
+        else
+        {
+            pointer.gameObject.SetActive(true);
+        }
     }
 
     private PlayerInputs GetPlayerInput()
