@@ -21,6 +21,11 @@ public class RootBehaviour : ObjectBehaviour
         }
     }
 
+    private void Start()
+    {
+        Debug.Log($"{Screen.width} / ${Screen.height}");
+    }
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.F5))
